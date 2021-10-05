@@ -2,6 +2,7 @@ package johnston.linkedlist.test;
 
 import johnston.linkedlist.MyLinkedList;
 import johnston.linkedlist.MyLinkedListImpl;
+import johnston.linkedlist.MyLinkedListMultiThreadingTest;
 import johnston.linkedlist.MyLinkedListSafeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * test. Using integer as the assigned type.
  */
 public class MySafeLinkedListConcurrencyTest {
-  private MyLinkedList<Integer> intList;
+   private MyLinkedListSafeImpl<Integer> intList;
+
+   // Use basic types To test multi-threading test cases correctness.
+   // private MyLinkedListImpl<Integer> intList;
 
   /**
    * To test multi-threading test cases correctness, let the linked list init as the basic
@@ -24,7 +28,8 @@ public class MySafeLinkedListConcurrencyTest {
   @BeforeEach
   public void init() {
     intList = new MyLinkedListSafeImpl<>();
-    // To test multi-threading test cases correctness.
+
+    // Use basic types To test multi-threading test cases correctness.
     // intList = new MyLinkedListImpl<>();
   }
 
@@ -53,23 +58,22 @@ public class MySafeLinkedListConcurrencyTest {
     }
 
     // Set up threads
-    ReadWriteThread[] threadPool = new ReadWriteThread[threadCount];
+    Thread[] threadPool = new Thread[threadCount];
     for (int i = 0; i < threadCount; i++) {
       threadPool[i] = new ReadWriteThread();
     }
 
     // Run threads
-    for (ReadWriteThread thread: threadPool) {
+    for (Thread thread : threadPool) {
       thread.start();
     }
 
     // Let the main thread waits until all working threads finished.
-    for (Thread thread : threadPool) {
-      try {
+    try {
+      for (Thread thread : threadPool) {
         thread.join();
-      } catch (InterruptedException e) {
-
       }
+    } catch (InterruptedException e) {
     }
 
     // Basic linked list class would cause NullPtrException.
@@ -98,7 +102,7 @@ public class MySafeLinkedListConcurrencyTest {
     }
 
     // Set up threads
-    DeletionThread[] threadPool = new DeletionThread[threadCount];
+    Thread[] threadPool = new Thread[threadCount];
     for (int i = 0; i < threadCount; i++) {
       threadPool[i] = new DeletionThread();
     }
@@ -109,17 +113,70 @@ public class MySafeLinkedListConcurrencyTest {
     }
 
     // Let the main thread waits until all working threads finished.
-    for (Thread thread : threadPool) {
-      try {
+    try {
+      for (Thread thread : threadPool) {
         thread.join();
-      } catch (InterruptedException e) {
-
       }
+    } catch (InterruptedException e) {
     }
 
     // Basic linked-list would have size inconsistency.
     System.out.println(intList.getNodeLength());
     assertTrue(intList.getNodeLength() == intList.size());
+  }
+
+  private int finishedThread = 0;
+  private boolean diff = false;
+
+  @Test
+  @DisplayName("Test read-write data racing.")
+  public void testReadWriteDataRace() {
+    reset();
+    int testTime = 1000;
+    int threadCount = 10;
+
+    class WriteDeleteThread extends Thread {
+      public void run() {
+        for (int i = 0; i < testTime; i++) {
+          intList.addAndDelete(1);
+        }
+        System.out.println("Deletion thread (id: " + this.getId() + ") finished.");
+        finishedThread++;
+      }
+    }
+
+    Thread[] threadPool = new Thread[threadCount];
+    for (int i = 0; i < threadPool.length; i++) {
+      threadPool[i] = new WriteDeleteThread();
+    }
+
+    Thread readThread = new Thread() {
+      public void run() {
+        while (finishedThread != threadCount) {
+          int size = intList.size();
+          if (size < 0 || size > 1) {
+            diff = true;
+            System.out.println(size + " !!!!!!!!!!!!!!!!");
+            break;
+          }
+        }
+      }
+    };
+
+    for (Thread thread : threadPool) {
+      thread.start();
+    }
+    readThread.start();
+
+    // Let the main thread waits until all working threads finished.
+    try {
+      for (Thread thread : threadPool) {
+        thread.join();
+      }
+      readThread.join();
+    } catch (InterruptedException e) {
+    }
+    assertTrue(!diff);
   }
 
   private void reset() {

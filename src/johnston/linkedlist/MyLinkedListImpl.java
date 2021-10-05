@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * This is the implementation of singly linked list. It's the basic linked list without thread-safety.
  */
-public class MyLinkedListImpl<V> implements MyLinkedList<V> {
+public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListMultiThreadingTest<V> {
   /**
   * List node as an inner class for linked list.
   */
@@ -99,6 +99,25 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V> {
   }
 
   /**
+   * Return the index of the given value. If no such value, return -1.
+   */
+  @Override
+  public int getIndex(V v) {
+    int index = 0;
+    ListNode curr = this.dummy.next;
+
+    while (curr != null && !curr.v.equals(v)) {
+      curr = curr.next;
+      index++;
+    }
+
+    if (size == 0 || index == size) {
+      return -1;
+    }
+    return index;
+  }
+
+  /**
    * Assign the new value to the node at the given index.
    */
   @Override
@@ -133,7 +152,7 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V> {
   }
 
   /**
-   * Remove the target element. If the element does not exist,
+   * Remove the target element. If the element does not exist, return false.
    */
   @Override
   public boolean remove(V v) {
@@ -180,6 +199,12 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V> {
       curr = curr.next;
     }
     return count;
+  }
+
+  @Override
+  public void addAndDelete(V v) {
+    add(v);
+    remove(v);
   }
 
   private void updateEnd() {

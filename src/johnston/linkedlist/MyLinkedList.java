@@ -11,6 +11,7 @@ public interface MyLinkedList<V> {
 
   public boolean contains(V v);
   public V get(int index);
+  public int getIndex(V v);
   public List<V> getAll();
 
   public MyLinkedList add(V v);
@@ -18,9 +19,4 @@ public interface MyLinkedList<V> {
 
   public boolean remove(V v);
   public MyLinkedList removeAll();
-
-  /**
-   * This method is for multi-threading test only.
-   */
-  public int getNodeLength();
 }

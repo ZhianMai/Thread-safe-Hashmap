@@ -193,6 +193,30 @@ public class MyLinkedListImplTest {
                newString.equals(stringList.get(testTime - 1)));
   }
 
+  @Test
+  @DisplayName("Test get value index")
+  public void testGetValueIndex() {
+    reset();
+    int testTime = 100;
+    String begin = "begin";
+    String middle = "mid";
+    String end = "end";
+    List<String> input = buildStringInput("Test ", testTime);
+    input.set(0, begin);
+    input.set(testTime / 2, middle);
+    input.set(testTime - 1, end);
+
+    for (String str : input) {
+      stringList.add(str); // Use different String obj
+    }
+
+    assertTrue(stringList.getIndex(begin) == 0 &&
+               stringList.getIndex(middle) == testTime / 2 &&
+               stringList.getIndex(end) == testTime - 1 &&
+               stringList.getIndex("Null") == -1
+        );
+  }
+
   private void reset() {
     stringList.removeAll();
     intList.removeAll();
