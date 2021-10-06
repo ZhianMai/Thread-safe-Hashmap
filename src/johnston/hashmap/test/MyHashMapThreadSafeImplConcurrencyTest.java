@@ -72,7 +72,7 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
       for (Thread thread : threadPool) {
         thread.join();
       }
-    } catch (InterruptedException e) {
+    } catch (InterruptedException e) { 
     }
 
     // Basic hash map class would cause NullPtrException.
