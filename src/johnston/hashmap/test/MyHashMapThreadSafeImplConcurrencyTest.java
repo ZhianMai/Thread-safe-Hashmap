@@ -25,7 +25,7 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
   public void init() {
     hashMap = new MyHashMapThreadSafeImpl<String, Integer>();
     // hashMap = new MyHashMapImpl<String, Integer>();
-    globalTestTime = 100;
+    globalTestTime = 1000;
     testFactor = 1000;
     random = new Random();
   }
@@ -85,15 +85,14 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
   public void deleteDataRace() {
     reset();
     int threadCount = 10;
-    int testTime = globalTestTime * 10;
+    int testTime = globalTestTime * testFactor;
 
     // Let multiple threads delete data at the same time.
     class DeletionThread extends Thread {
       public void run() {
-        List<String> keys = buildStringInput(String.valueOf(random.nextDouble()) , testTime);
-        int total = testTime * testFactor;
-        for (int i = 0; i < total; i++) {
-          String key = keys.get(i % testFactor);
+        List<String> keys = buildStringInput(String.valueOf(random.nextInt()), testTime);
+        for (int i = 0; i < testTime; i++) {
+          String key = keys.get(i);
           hashMap.put(key, 1);
           assertTrue(hashMap.containsKey(key));
           hashMap.remove(key);

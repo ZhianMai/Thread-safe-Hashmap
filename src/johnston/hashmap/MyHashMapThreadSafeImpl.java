@@ -244,7 +244,7 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
    * No need to lock since all caller functions are locked by write lock.
    */
   private void rehash() {
-    if (this.size * 1.0f / this.capacity != loadFactor) {
+    if (this.size * 1.0f / this.capacity < loadFactor) {
       return;
     }
 
