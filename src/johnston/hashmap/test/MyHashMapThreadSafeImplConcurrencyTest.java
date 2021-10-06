@@ -1,6 +1,6 @@
 package johnston.hashmap.test;
 
-import johnston.hashmap.MyHashMapImpl;
+import johnston.hashmap.MyHashMapThreadSafeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,13 +12,13 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MyHashMapImplCorrectnessTest {
-  private MyHashMapImpl<String, Integer> hashMap;
+public class MyHashMapThreadSafeImplConcurrencyTest {
+  private MyHashMapThreadSafeImpl<String, Integer> hashMap;
   private int globalTestTime;
 
   @BeforeEach
   public void init() {
-    hashMap = new MyHashMapImpl<String, Integer>();
+    hashMap = new MyHashMapThreadSafeImpl<String, Integer>();
     globalTestTime = 100;
   }
 

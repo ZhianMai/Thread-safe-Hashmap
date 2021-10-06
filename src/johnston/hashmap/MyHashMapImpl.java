@@ -1,7 +1,7 @@
 package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.LinkedListSafeImpl;
+import johnston.linkedlist.LinkedListThreadSafeImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,7 +90,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
     MapPair<K, V> newPair = new MapPair<>(k, null);
 
     if (bucketList[bucketIdx] == null) {
-      bucketList[bucketIdx] = new LinkedListSafeImpl<>();
+      bucketList[bucketIdx] = new LinkedListThreadSafeImpl<>();
       bucketList[bucketIdx].append(newPair);
       size++;
       return;
@@ -165,7 +165,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
         int bucketIdx = getIndex((K) pair.key);
 
         if (bucketList[bucketIdx] == null) {
-          bucketList[bucketIdx] = new LinkedListSafeImpl<>();
+          bucketList[bucketIdx] = new LinkedListThreadSafeImpl<>();
         }
         bucketList[bucketIdx].append(pair);
       }

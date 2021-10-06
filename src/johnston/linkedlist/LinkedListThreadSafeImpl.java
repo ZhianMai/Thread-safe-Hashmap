@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * I choose not to inherit from MyLinkedList class because setting up critical section should be
  * specific, meaning it would override almost all methods.
  */
-public class LinkedListSafeImpl<V> implements MyLinkedList<V>,
+public class LinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
     LinkedListConcurrencyTestSupport<V> {
   /**
    * List node as an inner class for linked list.
@@ -45,11 +45,11 @@ public class LinkedListSafeImpl<V> implements MyLinkedList<V>,
   private Lock readLock;
   private Lock writeLock;
 
-  public LinkedListSafeImpl() {
+  public LinkedListThreadSafeImpl() {
     this(null);
   }
 
-  public LinkedListSafeImpl(V v) {
+  public LinkedListThreadSafeImpl(V v) {
     this.dummy = new ListNode<>(null);
     this.size = 0;
 
@@ -92,11 +92,11 @@ public class LinkedListSafeImpl<V> implements MyLinkedList<V>,
 
   /**
    * Add the node to the end of array, return linked list itself.
-   *
+   * <p>
    * Write lock required
    */
   @Override
-  public LinkedListSafeImpl add(V v) {
+  public LinkedListThreadSafeImpl add(V v) {
     writeLock.lock();
     try {
       updateEnd();
@@ -151,7 +151,7 @@ public class LinkedListSafeImpl<V> implements MyLinkedList<V>,
 
   /**
    * Return the value at the given index.
-   *
+   * <p>
    * Read lock required.
    */
   @Override
@@ -176,7 +176,7 @@ public class LinkedListSafeImpl<V> implements MyLinkedList<V>,
 
   /**
    * Return the value which is equals to the given value. This is for hashMap key-val matching.
-   *
+   * <p>
    * Read lock required.
    */
   @Override
@@ -312,7 +312,7 @@ public class LinkedListSafeImpl<V> implements MyLinkedList<V>,
    * Write lock required.
    */
   @Override
-  public LinkedListSafeImpl removeAll() {
+  public LinkedListThreadSafeImpl removeAll() {
     writeLock.lock();
 
     try {
