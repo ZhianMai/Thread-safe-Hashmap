@@ -58,5 +58,5 @@ The multi-threading test cases contain write, read-write, write-delete tests, an
 
 In general, the ReentrantReadWriteLock has better flexibility than synchronized keywords, such as avoiding starvation, supporting priority, and spearating read-write operation.
 
-But the performance test on a single machine shows that ReentrantReadWriteLock does not have significant speedup than synchronized keyword. I tried to minimize the critical sections for read-write look, but the performance has no significant improvement, and it's easier to cause errors than locking the whole method. 
+But the performance test on a single machine shows that ReentrantReadWriteLock does not have significant speedup than synchronized keyword. Maybe the runtime overhead is higher than traditional synchronized keyword. I tried minimizing the critical sections for read-write look, but the performance has no significant improvement, and it's easier to cause errors than locking the whole method. 
 
