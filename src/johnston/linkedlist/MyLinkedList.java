@@ -11,10 +11,12 @@ public interface MyLinkedList<V> {
 
   public boolean contains(V v);
   public V get(int index);
+  public V get(V v);
   public int getIndex(V v);
   public List<V> getAll();
 
   public MyLinkedList add(V v);
+  public MyLinkedList append(V v);
   public boolean set(V v, int index);
 
   public boolean remove(V v);

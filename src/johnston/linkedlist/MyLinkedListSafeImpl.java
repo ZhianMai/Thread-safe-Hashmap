@@ -91,8 +91,8 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
   }
 
   /**
-   * Return linked list itself.
-   * <p>
+   * Add the node to the end of array, return linked list itself.
+   *
    * Write lock required
    */
   @Override
@@ -102,6 +102,22 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
       updateEnd();
       this.end.next = new ListNode<>(v);
       this.end = this.end.next;
+      this.size++;
+
+      return this;
+    } finally {
+      writeLock.unlock();
+    }
+  }
+
+  @Override
+  public MyLinkedList append(V v) {
+    writeLock.lock();
+
+    try {
+      ListNode<V> newNode = new ListNode<>(v);
+      newNode.next = dummy.next;
+      dummy.next = newNode;
       this.size++;
 
       return this;
@@ -135,7 +151,7 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
 
   /**
    * Return the value at the given index.
-   * <p>
+   *
    * Read lock required.
    */
   @Override
@@ -155,6 +171,31 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
       return (V) curr.v;
     } finally {
       writeLock.unlock();
+    }
+  }
+
+  /**
+   * Return the value which is equals to the given value. This is for hashMap key-val matching.
+   *
+   * Read lock required.
+   */
+  @Override
+  public V get(V v) {
+    readLock.lock();
+
+    try {
+      if (this.size == 0) {
+        return null;
+      }
+
+      ListNode curr = this.dummy.next;
+
+      while (curr != null && !curr.v.equals(v)) {
+        curr = curr.next;
+      }
+      return curr == null ? null : (V) curr.v;
+    } finally {
+      readLock.unlock();
     }
   }
 
@@ -259,10 +300,6 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
 
       curr.next = curr.next.next;
       this.size--;
-
-      if (curr.next == null) { // Update end node if the last element is deleted
-        this.end = curr;
-      }
       return true;
     } finally {
       writeLock.unlock();
@@ -292,14 +329,20 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public int getNodeLength() {
-    ListNode curr = dummy;
-    int count = 0;
+    readLock.lock();
 
-    while (curr.next != null) {
-      count++;
-      curr = curr.next;
+    try {
+      ListNode curr = dummy;
+      int count = 0;
+
+      while (curr.next != null) {
+        count++;
+        curr = curr.next;
+      }
+      return count;
+    } finally {
+      readLock.unlock();
     }
-    return count;
   }
 
   /**
@@ -311,6 +354,9 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
 
     try {
       add(v);
+      remove(v);
+
+      append(v);
       remove(v);
     } finally {
       writeLock.unlock();
@@ -324,15 +370,10 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
    * racing here.
    */
   private void updateEnd() {
-    if (this.end != null && this.end.next == null) { // Already the end
-      return;
-    }
+    end = dummy;
 
-    ListNode curr = dummy;
-
-    while (curr.next != null) {
-      curr = curr.next;
+    while (end.next != null) {
+      end = end.next;
     }
-    end = curr;
   }
 }

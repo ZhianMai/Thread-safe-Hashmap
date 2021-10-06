@@ -53,13 +53,26 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListMultiTh
   }
 
   /**
-   * Return linked list itself.
+   * Add the node to the end of array, return linked list itself.
    */
   @Override
   public MyLinkedList add(V v) {
     updateEnd();
     this.end.next = new ListNode<>(v);
     this.end = this.end.next;
+    this.size++;
+
+    return this;
+  }
+
+  /**
+   * Add the node to the begin of the linked list.
+   */
+  @Override
+  public MyLinkedList append(V v) {
+    ListNode<V> newNode = new ListNode<>(v);
+    newNode.next = dummy.next;
+    dummy.next = newNode;
     this.size++;
 
     return this;
@@ -96,6 +109,20 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListMultiTh
       curr = curr.next;
     }
     return (V) curr.v;
+  }
+
+  @Override
+  public V get(V v) {
+    if (this.size == 0) {
+      return null;
+    }
+
+    ListNode curr = this.dummy.next;
+
+    while (curr != null && !curr.v.equals(v)) {
+      curr = curr.next;
+    }
+    return curr == null ? null : (V) curr.v;
   }
 
   /**
@@ -172,10 +199,6 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListMultiTh
 
     curr.next = curr.next.next;
     this.size--;
-
-    if (curr.next == null) { // Update end node if the last element is deleted
-      this.end = curr;
-    }
     return true;
   }
 
@@ -208,15 +231,10 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListMultiTh
   }
 
   private void updateEnd() {
-    if (this.end != null && this.end.next == null) { // Already the end
-      return;
-    }
+    end = dummy;
 
-    ListNode curr = dummy;
-
-    while (curr.next != null) {
-      curr = curr.next;
+    while (end.next != null) {
+      end = end.next;
     }
-    end = curr;
   }
 }

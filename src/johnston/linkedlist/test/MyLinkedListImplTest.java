@@ -174,6 +174,23 @@ public class MyLinkedListImplTest {
   }
 
   @Test
+  @DisplayName("Test new node append")
+  public void testNewNodeAppend() {
+    reset();
+    String one = "one";
+    String two = "two";
+    String three = "three";
+    stringList.append(one);
+    stringList.append(two);
+    stringList.append(three);
+
+    assertTrue(stringList.getIndex(one) == 2 &&
+        stringList.getIndex(two) == 1 &&
+        stringList.getIndex(three) == 0 &&
+        stringList.size() == 3);
+  }
+
+  @Test
   @DisplayName("Test set value at given idx")
   public void testSetValue() {
     reset();
@@ -215,6 +232,23 @@ public class MyLinkedListImplTest {
                stringList.getIndex(end) == testTime - 1 &&
                stringList.getIndex("Null") == -1
         );
+  }
+
+  @Test
+  @DisplayName("Test return the same value as the given value")
+  public void testReturnSameValue() {
+    reset();
+    String strA = "A";
+    String strB = "B";
+    String strC = "C";
+    stringList.add(new String(strA));
+    stringList.add(new String(strB));
+    stringList.add(new String(strC));
+
+    assertTrue(strA.equals(stringList.get(strA)) &&
+        strB.equals(stringList.get(strB)) &&
+        strC.equals(stringList.get(strC)) &&
+        stringList.get("Bad string") == null);
   }
 
   private void reset() {
