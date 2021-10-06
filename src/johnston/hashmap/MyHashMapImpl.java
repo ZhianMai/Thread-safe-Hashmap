@@ -1,12 +1,12 @@
 package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.MyLinkedListSafeImpl;
+import johnston.linkedlist.LinkedListSafeImpl;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MyHashMapImpl<K, V> implements MyHashMap<K, V> {
+public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;
@@ -75,7 +75,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V> {
     MapPair<K, V> newPair = new MapPair<>(k, null);
 
     if (bucketList[bucketIdx] == null) {
-      bucketList[bucketIdx] = new MyLinkedListSafeImpl<>();
+      bucketList[bucketIdx] = new LinkedListSafeImpl<>();
       bucketList[bucketIdx].append(newPair);
       size++;
       return;
@@ -84,6 +84,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V> {
     MapPair<K, V> oldPair = bucketList[bucketIdx].get(newPair);
     if (oldPair == null) { // No such pair
       bucketList[bucketIdx].append(newPair);
+      size++;
     } else { // Update old value
       oldPair.setV(v);
     }
@@ -124,7 +125,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V> {
   }
 
   private void rehash() {
-    if (this.capacity * 1.0 / this.size < loadFactor) {
+    if (this.size * 1.0f / this.capacity < loadFactor) {
       return;
     }
 
@@ -142,10 +143,34 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V> {
         int bucketIdx = getIndex((K) pair.key);
 
         if (bucketList[bucketIdx] == null) {
-          bucketList[bucketIdx] = new MyLinkedListSafeImpl<>();
+          bucketList[bucketIdx] = new LinkedListSafeImpl<>();
         }
         bucketList[bucketIdx].append(pair);
       }
     }
+  }
+
+  @Override
+  public int[] getAllBucketSize() {
+    int[] result = new int[bucketList.length];
+
+    for (int i = 0; i < result.length; i++) {
+      if (bucketList[i] != null) {
+        result[i] = bucketList[i].size();
+      }
+    }
+    return result;
+  }
+
+  @Override
+  public int getTotalPairCount() {
+    int result = 0;
+
+    for (int i = 0; i < bucketList.length; i++) {
+      if (bucketList[i] != null) {
+        result += bucketList[i].size();
+      }
+    }
+    return result;
   }
 }

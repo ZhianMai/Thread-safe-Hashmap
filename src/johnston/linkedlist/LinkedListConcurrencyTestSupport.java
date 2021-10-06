@@ -3,7 +3,7 @@ package johnston.linkedlist;
 /**
  * This interface provides methods for multi-threading testing.
  */
-public interface MyLinkedListMultiThreadingTest<V> {
+public interface LinkedListConcurrencyTestSupport<V> {
   /**
    * This method is for multi writes data racing test.
    */

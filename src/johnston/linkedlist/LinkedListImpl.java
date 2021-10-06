@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is the implementation of singly linked list. It's the basic linked list without thread-safety.
+ * This is the implementation of singly linked list. It's the basic linked list without
+ * thread-safety.
  */
-public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListMultiThreadingTest<V> {
+public class LinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrencyTestSupport<V> {
   /**
   * List node as an inner class for linked list.
   */
@@ -28,11 +29,11 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListMultiTh
   private ListNode<V> dummy;
   private ListNode<V> end; // End of linked list
 
-  public MyLinkedListImpl() {
+  public LinkedListImpl() {
     this(null);
   }
 
-  public MyLinkedListImpl(V v) {
+  public LinkedListImpl(V v) {
     this.dummy = new ListNode<>(null);
     this.size = 0;
 

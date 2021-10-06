@@ -1,7 +1,7 @@
 package johnston.linkedlist.test;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.MyLinkedListSafeImpl;
+import johnston.linkedlist.LinkedListSafeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class MySafeLinkedListCorrectnessTest {
 
   @BeforeEach
   public void init() {
-    stringList = new MyLinkedListSafeImpl<>();
+    stringList = new LinkedListSafeImpl<>();
   }
 
   @Test
@@ -87,7 +87,7 @@ public class MySafeLinkedListCorrectnessTest {
   @DisplayName("Test ctor")
   public void testCtor() {
     String str = "Test";
-    stringList = new MyLinkedListSafeImpl<>(new String(str));
+    stringList = new LinkedListSafeImpl<>(new String(str));
 
     assertTrue(stringList.size() == 1 && str.equals(stringList.get(0)));
   }

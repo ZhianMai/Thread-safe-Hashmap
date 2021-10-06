@@ -1,7 +1,7 @@
 package johnston.linkedlist.test;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.MyLinkedListImpl;
+import johnston.linkedlist.LinkedListImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +17,8 @@ public class MyLinkedListImplTest {
 
   @BeforeEach
   public void init() {
-    stringList = new MyLinkedListImpl<>();
-    intList = new MyLinkedListImpl<>();
+    stringList = new LinkedListImpl<>();
+    intList = new LinkedListImpl<>();
   }
 
   @Test
@@ -86,7 +86,7 @@ public class MyLinkedListImplTest {
   @DisplayName("Test ctor")
   public void testCtor() {
     String str = "Test";
-    stringList = new MyLinkedListImpl<>(new String(str));
+    stringList = new LinkedListImpl<>(new String(str));
 
     assertTrue(stringList.size() == 1 && str.equals(stringList.get(0)));
   }

@@ -19,8 +19,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * I choose not to inherit from MyLinkedList class because setting up critical section should be
  * specific, meaning it would override almost all methods.
  */
-public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
-    MyLinkedListMultiThreadingTest<V> {
+public class LinkedListSafeImpl<V> implements MyLinkedList<V>,
+    LinkedListConcurrencyTestSupport<V> {
   /**
    * List node as an inner class for linked list.
    */
@@ -45,11 +45,11 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
   private Lock readLock;
   private Lock writeLock;
 
-  public MyLinkedListSafeImpl() {
+  public LinkedListSafeImpl() {
     this(null);
   }
 
-  public MyLinkedListSafeImpl(V v) {
+  public LinkedListSafeImpl(V v) {
     this.dummy = new ListNode<>(null);
     this.size = 0;
 
@@ -96,7 +96,7 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
    * Write lock required
    */
   @Override
-  public MyLinkedListSafeImpl add(V v) {
+  public LinkedListSafeImpl add(V v) {
     writeLock.lock();
     try {
       updateEnd();
@@ -312,7 +312,7 @@ public class MyLinkedListSafeImpl<V> implements MyLinkedList<V>,
    * Write lock required.
    */
   @Override
-  public MyLinkedListSafeImpl removeAll() {
+  public LinkedListSafeImpl removeAll() {
     writeLock.lock();
 
     try {

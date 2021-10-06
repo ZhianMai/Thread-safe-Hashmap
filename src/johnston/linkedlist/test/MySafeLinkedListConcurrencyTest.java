@@ -1,9 +1,6 @@
 package johnston.linkedlist.test;
 
-import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.MyLinkedListImpl;
-import johnston.linkedlist.MyLinkedListMultiThreadingTest;
-import johnston.linkedlist.MyLinkedListSafeImpl;
+import johnston.linkedlist.LinkedListSafeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * test. Using integer as the assigned type.
  */
 public class MySafeLinkedListConcurrencyTest {
-   private MyLinkedListSafeImpl<Integer> intList;
+   private LinkedListSafeImpl<Integer> intList;
 
    // Use basic types To test multi-threading test cases correctness.
    // private MyLinkedListImpl<Integer> intList;
@@ -27,7 +24,7 @@ public class MySafeLinkedListConcurrencyTest {
    */
   @BeforeEach
   public void init() {
-    intList = new MyLinkedListSafeImpl<>();
+    intList = new LinkedListSafeImpl<>();
 
     // Use basic types To test multi-threading test cases correctness.
     // intList = new MyLinkedListImpl<>();
