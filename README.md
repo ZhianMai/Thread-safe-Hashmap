@@ -50,6 +50,8 @@ Interface <i>MyHashMap</i> provides methods:
 - void removeAll();
 - boolean remove(K k);
 
+For hash collision, these implementations use separate chaining, and the hash map bucket uses MyLinkedList. 
+
 ## Multi-threading test cases
 
 The multi-threading test cases contain write, read-write, write-delete tests, and heavy read performance test. The basic implementations can cause data racing and would eventually fail these tests at some point.
@@ -58,5 +60,6 @@ The multi-threading test cases contain write, read-write, write-delete tests, an
 
 In general, the ReentrantReadWriteLock has better flexibility than synchronized keywords, such as avoiding starvation, supporting priority, and spearating read-write operation.
 
-But the performance test on a single machine shows that ReentrantReadWriteLock does not have significant speedup than synchronized keyword. Maybe the runtime overhead is higher than traditional synchronized keyword. I tried minimizing the critical sections for read-write look, but the performance has no significant improvement, and it's easier to cause errors than locking the whole method. 
+But the performance test on a single machine shows that ReentrantReadWriteLock does not have significant speedup than synchronized keyword. Maybe the runtime overhead is higher than traditional synchronized keyword. I tried minimizing the critical sections for read-write look, but the performance has no significant improvement, and it's easier to cause errors than locking the whole method.
 
+The hash map buckets use basic or thread-safe linked-list can both pass the multi-threading tests. Since all write operations are locked, so the bucket list is guaranteed only one thread enter & write/delte at the same time.
