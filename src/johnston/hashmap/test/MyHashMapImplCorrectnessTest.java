@@ -1,6 +1,5 @@
 package johnston.hashmap.test;
 
-import johnston.hashmap.MyHashMap;
 import johnston.hashmap.MyHashMapImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -119,6 +118,18 @@ public class MyHashMapImplCorrectnessTest {
       assertTrue(hashMap.remove(key));
       assertEquals(null, hashMap.get(key));
       assertTrue(!hashMap.containsKey(key));
+    }
+  }
+
+  @Test
+  @DisplayName("Test hash map size.")
+  public void testSize() {
+    reset();
+    List<String> keys = buildStringInput("Pair ", globalTestTime);
+    for (int i = 0; i < globalTestTime; i++) {
+      assertEquals(i, hashMap.size());
+      hashMap.put(keys.get(i), 1);
+      assertEquals(i + 1, hashMap.size());
     }
   }
 

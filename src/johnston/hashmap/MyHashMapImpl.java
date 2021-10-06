@@ -6,6 +6,11 @@ import johnston.linkedlist.LinkedListSafeImpl;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This is the basic hash map implementation without thread safety.
+ *
+ * The bucket uses thread-safe singly linked list.
+ */
 public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
   private int size;
   private int capacity;
@@ -13,6 +18,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
   private final float loadFactor;
 
   public static final int DEFAULT_CAPACITY = 16;
+  public static final int REHASH_FACTOR = 2;
   public static final float DEFAULT_LOAD_FACTOR = 0.5f;
 
   public MyHashMapImpl(int capacity, float loadFactor) {
@@ -41,6 +47,9 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
     return hash(one) == hash(two);
   }
 
+  /**
+   * Return the value by given key. If no such key, return null.
+   */
   @Override
   public V get(K k) {
     int bucketIdx = getIndex(k);
@@ -57,6 +66,9 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
     return (V) bucketList[bucketIdx].get(pairIdx).getV();
   }
 
+  /**
+   * Return true if key exists, otherwise false.
+   */
   @Override
   public boolean containsKey(K k) {
     int bucketIdx = getIndex(k);
@@ -68,6 +80,9 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
     return bucketList[bucketIdx].contains(dummy);
   }
 
+  /**
+   * If the key exists, update the value, otherwise insert a new pair.
+   */
   @Override
   public void put(K k, V v) {
     rehash();
@@ -96,6 +111,9 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
     Arrays.fill(bucketList, null);
   }
 
+  /**
+   * Remove the pair by the given key and return true. If no such keys, return false.
+   */
   @Override
   public boolean remove(K k) {
     int bucketIdx = getIndex(k);
@@ -124,12 +142,16 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
     return hash % bucketList.length;
   }
 
+  /**
+   * Double the capacity of the hash table if the load factor is > 0.5. All pairs are guaranteed
+   * to be found by given keys after rehashing.
+   */
   private void rehash() {
     if (this.size * 1.0f / this.capacity < loadFactor) {
       return;
     }
 
-    capacity *= 2;
+    capacity *= REHASH_FACTOR;
     MyLinkedList<MapPair>[] oldBucketList = bucketList;
     bucketList = (MyLinkedList<MapPair>[]) (new MyLinkedList[capacity]);
 
