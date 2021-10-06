@@ -1,7 +1,6 @@
 package johnston.hashmap.test;
 
-import johnston.hashmap.MyHashMapImpl;
-import johnston.hashmap.MyHashMapThreadSafeImpl;
+import johnston.hashmap.MyHashMapReentrantImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,17 +12,23 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MyHashMapThreadSafeImplConcurrencyTest {
-  private MyHashMapThreadSafeImpl<String, Integer> hashMap;
+public class MyHashMapReentrantImplConcurrencyTest {
+  private MyHashMapReentrantImpl<String, Integer> hashMap;
+
+  // Use the thread-safe hash map with synchronized keyword
+  // private MyHashMapSyncedImpl<String, Integer> hashMap;
+
   // Use the thread-unsafe hash map would fail all tests.
   // private MyHashMapImpl<String, Integer> hashMap;
+
   private int globalTestTime;
   private Random random;
   private int testFactor;
 
   @BeforeEach
   public void init() {
-    hashMap = new MyHashMapThreadSafeImpl<String, Integer>();
+    hashMap = new MyHashMapReentrantImpl<String, Integer>();
+    // hashMap = new MyHashMapSyncedImpl<String, Integer>();
     // hashMap = new MyHashMapImpl<String, Integer>();
     globalTestTime = 1000;
     testFactor = 1000;
@@ -145,7 +150,7 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
         for (int i = 0; i < testTime; i++) {
           hashMap.addAndDelete(String.valueOf(random.nextDouble()), 1);
         }
-        System.out.println("Deletion thread (id: " + this.getId() + ") finished.");
+        System.out.println("WriteDeleteThread thread (id: " + this.getId() + ") finished.");
         finishedThread++;
       }
     }
@@ -182,6 +187,44 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
     } catch (InterruptedException e) {
     }
     assertTrue(!diff);
+  }
+
+  @Test
+  @DisplayName("Test heavy read data performance")
+  public void testReadPerformance() {
+    reset();
+    int testTime = globalTestTime * testFactor;
+    int threadCount = 6;
+    List<String> keyList = buildStringInput("Test ", testTime);
+    writeSameValue(keyList, 1);
+    String key = "Test 0";
+
+    class ReadThread extends Thread {
+      public void run() {
+        int total = testTime * 30;
+        for (int i = 0; i < total; i++) {
+          hashMap.containsKey(key);
+        }
+        System.out.println("Read thread (id: " + this.getId() + ") finished.");
+      }
+    }
+
+    Thread[] threadPool = new Thread[threadCount];
+    for (int i = 0; i < threadPool.length; i++) {
+      threadPool[i] = new ReadThread();
+    }
+
+    for (Thread thread : threadPool) {
+      thread.start();
+    }
+
+    // Let the main thread waits until all working threads finished.
+    try {
+      for (Thread thread : threadPool) {
+        thread.join();
+      }
+    } catch (InterruptedException e) {
+    }
   }
 
   /**

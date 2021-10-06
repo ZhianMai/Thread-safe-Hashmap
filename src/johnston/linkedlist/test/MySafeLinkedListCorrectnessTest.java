@@ -1,7 +1,7 @@
 package johnston.linkedlist.test;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.MyLinkedListThreadSafeImpl;
+import johnston.linkedlist.MyLinkedListReentrantLockImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class MySafeLinkedListCorrectnessTest {
 
   @BeforeEach
   public void init() {
-    stringList = new MyLinkedListThreadSafeImpl<>();
+    stringList = new MyLinkedListReentrantLockImpl<>();
   }
 
   @Test
@@ -87,7 +87,7 @@ public class MySafeLinkedListCorrectnessTest {
   @DisplayName("Test ctor")
   public void testCtor() {
     String str = "Test";
-    stringList = new MyLinkedListThreadSafeImpl<>(new String(str));
+    stringList = new MyLinkedListReentrantLockImpl<>(new String(str));
 
     assertTrue(stringList.size() == 1 && str.equals(stringList.get(0)));
   }

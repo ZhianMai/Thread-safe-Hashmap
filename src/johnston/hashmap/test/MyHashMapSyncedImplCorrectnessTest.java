@@ -1,7 +1,7 @@
 package johnston.hashmap.test;
 
 import johnston.hashmap.MyHashMapImpl;
-import johnston.hashmap.MyHashMapThreadSafeImpl;
+import johnston.hashmap.MyHashMapSyncedImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,13 +13,13 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MyHashMapThreadSafeImplCorrectnessTest {
-  private MyHashMapThreadSafeImpl<String, Integer> hashMap;
+public class MyHashMapSyncedImplCorrectnessTest {
+  private MyHashMapSyncedImpl<String, Integer> hashMap;
   private int globalTestTime;
 
   @BeforeEach
   public void init() {
-    hashMap = new MyHashMapThreadSafeImpl<String, Integer>();
+    hashMap = new MyHashMapSyncedImpl<String, Integer>();
     globalTestTime = 100;
   }
 
@@ -29,6 +29,7 @@ public class MyHashMapThreadSafeImplCorrectnessTest {
     assertTrue(true);
     assertTrue((hashMap != null), "Test object init.");
   }
+
 
   @Test
   @DisplayName("Test hash map removeAll().")
@@ -138,8 +139,8 @@ public class MyHashMapThreadSafeImplCorrectnessTest {
   }
 
   /**
-   * This method is to print each bucket size to show if clustered.
-   */
+  * This method is to print each bucket size to show if clustered.
+  */
   private void printALlBucketSize() {
     int[] allBucketSize = hashMap.getAllBucketSize();
     for (int i = 0; i < allBucketSize.length; i++) {

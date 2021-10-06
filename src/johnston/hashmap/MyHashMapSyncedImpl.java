@@ -2,17 +2,17 @@ package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
 import johnston.linkedlist.MyLinkedListImpl;
-import johnston.linkedlist.MyLinkedListReentrantLockImpl;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * This is the basic hash map implementation without thread safety.
+ * This is the thread-safety hash map implementation based on the basic hash map implementation.
  *
- * The bucket uses the basic (not thread-safe) singly linked list.
+ * This class uses synchronized keyword to ensure thread-safety instead of read-write lock.
+ * It's designed for performance testing.
  */
-public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
+public class MyHashMapSyncedImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;
@@ -22,25 +22,25 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
   public static final int REHASH_FACTOR = 2;
   public static final float DEFAULT_LOAD_FACTOR = 0.5f;
 
-  public MyHashMapImpl(int capacity, float loadFactor) {
+  public MyHashMapSyncedImpl(int capacity, float loadFactor) {
     this.capacity = capacity;
     this.size = 0;
     this.loadFactor = loadFactor;
     this.bucketList = (MyLinkedList<MapPair>[]) (new MyLinkedList[capacity]);
   }
 
-  public MyHashMapImpl() {
+  public MyHashMapSyncedImpl() {
     this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
   }
 
   @Override
-  public int size() {
+  public synchronized int size() {
     return this.size;
   }
 
   @Override
   public boolean isEmpty() {
-    return this.size == 0;
+    return this.size() == 0;
   }
 
   @Override
@@ -52,7 +52,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
    * Return the value by given key. If no such key, return null.
    */
   @Override
-  public V get(K k) {
+  public synchronized V get(K k) {
     int bucketIdx = getIndex(k);
     if (bucketList[bucketIdx] == null) {
       return null;
@@ -71,7 +71,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
    * Return true if key exists, otherwise false.
    */
   @Override
-  public boolean containsKey(K k) {
+  public synchronized boolean containsKey(K k) {
     int bucketIdx = getIndex(k);
     if (bucketList[bucketIdx] == null) {
       return false;
@@ -85,15 +85,13 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
    * If the key exists, update the value, otherwise insert a new pair.
    */
   @Override
-  public void put(K k, V v) {
+  public synchronized void put(K k, V v) {
     rehash();
     int bucketIdx = getIndex(k);
     MapPair<K, V> newPair = new MapPair<>(k, null);
 
     if (bucketList[bucketIdx] == null) {
-      bucketList[bucketIdx] = new MyLinkedListImpl<>();
-      // Using thread-safe linked list would not prevent data racing.
-      // bucketList[bucketIdx] = new MyLinkedListThreadSafeImpl<>();
+      bucketList[bucketIdx] = getNewLinkedList();
       bucketList[bucketIdx].addFirst(newPair);
       size++;
       return;
@@ -109,7 +107,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
   }
 
   @Override
-  public void removeAll() {
+  public synchronized void removeAll() {
     size = 0;
     Arrays.fill(bucketList, null);
   }
@@ -118,7 +116,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
    * Remove the pair by the given key and return true. If no such keys, return false.
    */
   @Override
-  public boolean remove(K k) {
+  public synchronized boolean remove(K k) {
     int bucketIdx = getIndex(k);
     if (bucketList[bucketIdx] == null) {
       return false;
@@ -170,15 +168,23 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
         if (bucketList[bucketIdx] == null) {
           bucketList[bucketIdx] = new MyLinkedListImpl<>();
           // Using thread-safe linked list would not prevent data racing.
-          bucketList[bucketIdx] = new MyLinkedListReentrantLockImpl<>();
+          bucketList[bucketIdx] = getNewLinkedList();
         }
         bucketList[bucketIdx].addFirst(pair);
       }
     }
   }
 
+  /**
+   * Place different linked list implementations here
+   */
+  private MyLinkedList<MapPair> getNewLinkedList() {
+    return new MyLinkedListImpl<>();
+    // return new MyLinkedListThreadSafeImpl<>();
+  }
+
   @Override
-  public int[] getAllBucketSize() {
+  public synchronized int[] getAllBucketSize() {
     int[] result = new int[bucketList.length];
 
     for (int i = 0; i < result.length; i++) {
@@ -190,7 +196,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
   }
 
   @Override
-  public int getTotalPairCount() {
+  public synchronized int getTotalPairCount() {
     int result = 0;
 
     for (int i = 0; i < bucketList.length; i++) {
@@ -202,7 +208,7 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
   }
 
   @Override
-  public void addAndDelete(K k, V v) {
+  public synchronized void addAndDelete(K k, V v) {
     put(k, v);
     remove(k);
   }

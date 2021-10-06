@@ -1,7 +1,6 @@
 package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedListImpl;
-import johnston.linkedlist.MyLinkedListThreadSafeImpl;
 import johnston.linkedlist.MyLinkedList;
 
 import java.util.Arrays;
@@ -21,7 +20,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * -> Read threads mutually exclude write threads.
  * -> Write threads mutually exclude each other.
  */
-public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
+public class MyHashMapReentrantImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;
@@ -35,7 +34,7 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
   private Lock readLock;
   private Lock writeLock;
 
-  public MyHashMapThreadSafeImpl(int capacity, float loadFactor) {
+  public MyHashMapReentrantImpl(int capacity, float loadFactor) {
     this.capacity = capacity;
     this.size = 0;
     this.loadFactor = loadFactor;
@@ -47,7 +46,7 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
     writeLock = reentrantReadWriteLock.writeLock();
   }
 
-  public MyHashMapThreadSafeImpl() {
+  public MyHashMapReentrantImpl() {
     this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
   }
 
