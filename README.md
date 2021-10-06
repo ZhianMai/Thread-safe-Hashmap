@@ -6,9 +6,11 @@ This repo contains the implementation of thread-safe linked list and hash map an
 
 :link:[link](src/johnston/linkedlist/)
 
-This contains:
+Implementation contains:
 - An implementation of basic singly linked list;
 - An implementation of thread-safe singly linked list based on basic linked list, using read-write lock provided by <i>Reentrantreadwritelock</i>.
+
+Test contains:
 - Linked list correctness test cases;
 - Linked list multi-threading test cases.
 
@@ -29,10 +31,12 @@ Interface <i>MyHashMap</i> provides methods:
 
 :link:[link](src/johnston/hashmap/)
 
-This contains:
-- An implementation of basic hash map;
-- An implementation of thread-safe hash map based on basic hash map, using <i>synchronized</i> keyword.
-- An implementation of thread-safe hash map based on basic hash map, using read-write lock provided by Reentrantreadwritelock.
+Implementation contains:
+- Basic hash map;
+- Thread-safe hash map based on basic hash map, using <i>synchronized</i> keyword.
+- Thread-safe hash map based on basic hash map, using read-write lock provided by Reentrantreadwritelock.
+
+Test contains:
 - Hash map correctness test cases;
 - Hash map multi-threading test cases.
 
