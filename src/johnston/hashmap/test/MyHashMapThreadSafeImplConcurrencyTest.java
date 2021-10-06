@@ -26,7 +26,7 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
     hashMap = new MyHashMapThreadSafeImpl<String, Integer>();
     // hashMap = new MyHashMapImpl<String, Integer>();
     globalTestTime = 100;
-    testFactor = 500;
+    testFactor = 1000;
     random = new Random();
   }
 
@@ -72,7 +72,7 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
       for (Thread thread : threadPool) {
         thread.join();
       }
-    } catch (InterruptedException e) { 
+    } catch (InterruptedException e) {
     }
 
     // Basic hash map class would cause NullPtrException.
@@ -91,10 +91,13 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
     class DeletionThread extends Thread {
       public void run() {
         List<String> keys = buildStringInput(String.valueOf(random.nextDouble()) , testTime);
-        for (int i = 0; i < testTime * testFactor; i++) {
+        int total = testTime * testFactor;
+        for (int i = 0; i < total; i++) {
           String key = keys.get(i % testFactor);
           hashMap.put(key, 1);
+          assertTrue(hashMap.containsKey(key));
           hashMap.remove(key);
+          assertTrue(!hashMap.containsKey(key));
         }
         System.out.println("Deletion thread (id: " + this.getId() + ") finished.");
       }

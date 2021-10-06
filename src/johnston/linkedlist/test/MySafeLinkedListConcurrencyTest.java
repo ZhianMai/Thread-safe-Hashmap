@@ -42,7 +42,7 @@ public class MySafeLinkedListConcurrencyTest {
   public void writeDataRace() {
     reset();
     int threadCount = 10;
-    int testTime = 300;
+    int testTime = 30000;
 
     // Let multiple threads write data at the same time.
     class ReadWriteThread extends Thread {
@@ -83,7 +83,7 @@ public class MySafeLinkedListConcurrencyTest {
   public void deleteDataRace() {
     reset();
     int threadCount = 10;
-    int testTime = 300;
+    int testTime = 3000;
 
     for (int i = 0; i <= threadCount * testTime; i++) {
       intList.addLast(1);

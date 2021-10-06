@@ -10,9 +10,16 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * This is the basic hash map implementation without thread safety.
+ * This is the basic hash map implementation with thread safety.
  * <p>
- * The bucket uses thread-safe singly linked list.
+ * The bucket can use thread-safe singly linked list or basic singly linked list.
+ *
+ * To improve performance, this class uses read-write lock instead of synchronized keyword.
+ * <p>
+ * Read-write lock can ensure:
+ * -> All read threads do not mutually exclude each other.
+ * -> Read threads mutually exclude write threads.
+ * -> Write threads mutually exclude each other.
  */
 public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
   private int size;
@@ -63,17 +70,11 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
   /**
    * Return if the current hash table is empty.
    * <p>
-   * Read lock required.
+   * No need to lock because size() has read lock.
    */
   @Override
   public boolean isEmpty() {
-    readLock.lock();
-
-    try {
-      return this.size == 0;
-    } finally {
-      readLock.unlock();
-    }
+    return size() == 0;
   }
 
   /**
@@ -91,21 +92,24 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
    */
   @Override
   public V get(K k) {
+    int bucketIdx;
+    MapPair<K, V> dummy = new MapPair<>(k, null);
+    int pairIdx;
     readLock.lock();
 
     try {
-      int bucketIdx = getIndex(k);
+      bucketIdx = getIndex(k);
       if (bucketList[bucketIdx] == null) {
         return null;
       }
 
-      MapPair<K, V> dummy = new MapPair<>(k, null);
-      int pairIdx = bucketList[bucketIdx].getIndex(dummy);
+      pairIdx = bucketList[bucketIdx].getIndex(dummy);
 
       if (pairIdx == -1) {
         return null;
       }
       return (V) bucketList[bucketIdx].get(pairIdx).getV();
+
     } finally {
       readLock.unlock();
     }
@@ -140,12 +144,13 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
    */
   @Override
   public void put(K k, V v) {
+    int bucketIdx;
+    MapPair<K, V> newPair = new MapPair<>(k, null);
     writeLock.lock();
 
     try {
       rehash();
-      int bucketIdx = getIndex(k);
-      MapPair<K, V> newPair = new MapPair<>(k, null);
+      bucketIdx = getIndex(k);
 
       if (bucketList[bucketIdx] == null) {
         bucketList[bucketIdx] = getNewLinkedList();
@@ -155,6 +160,7 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
       }
 
       MapPair<K, V> oldPair = bucketList[bucketIdx].get(newPair);
+
       if (oldPair == null) { // No such pair, add to the bucket at index 0.
         bucketList[bucketIdx].addFirst(newPair);
         size++;
@@ -168,7 +174,7 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
 
   /**
    * Empty the hash table.
-   *
+   * <p>
    * Write lock required.
    */
   @Override
@@ -185,19 +191,21 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
 
   /**
    * Remove the pair by the given key and return true. If no such keys, return false.
-   *
+   * <p>
    * Write lock required.
    */
   @Override
   public boolean remove(K k) {
+    int bucketIdx;
+    MapPair<K, V> dummy = new MapPair<>(k, null);
     writeLock.lock();
 
     try {
-      int bucketIdx = getIndex(k);
+      bucketIdx = getIndex(k);
+
       if (bucketList[bucketIdx] == null) {
         return false;
       }
-      MapPair<K, V> dummy = new MapPair<>(k, null);
 
       if (bucketList[bucketIdx].remove(dummy)) {
         size--;
@@ -222,7 +230,7 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
   }
 
   /**
-   * Return bucket index of the given key. No need to lock.
+   * Return bucket index of the given key. No need to lock. The variable bucketList has write lock.
    */
   private int getIndex(K k) {
     int hash = hash(k);
@@ -232,11 +240,11 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
   /**
    * Double the capacity of the hash table if the load factor is > 0.5. All pairs are guaranteed
    * to be found by given keys after rehashing.
-   *
+   * <p>
    * No need to lock since all caller functions are locked by write lock.
    */
   private void rehash() {
-    if (this.size * 1.0f / this.capacity < loadFactor) {
+    if (this.size * 1.0f / this.capacity != loadFactor) {
       return;
     }
 
@@ -261,9 +269,14 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
     }
   }
 
+  /**
+   * Place different linked list implementations here
+   */
   private MyLinkedList<MapPair> getNewLinkedList() {
     return new MyLinkedListImpl<>();
+    // return new MyLinkedListThreadSafeImpl<>();
   }
+
   /**
    * Method for testing only, won't expose to MyHashMap interface.
    */

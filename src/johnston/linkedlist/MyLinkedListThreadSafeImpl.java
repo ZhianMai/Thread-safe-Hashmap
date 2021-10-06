@@ -78,16 +78,11 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
   }
 
   /**
-   * Read lock required
+   * Read lock is not required since size() has read lock.
    */
   @Override
   public boolean isEmpty() {
-    readLock.lock();
-    try {
-      return this.size == 0;
-    } finally {
-      readLock.unlock();
-    }
+    return this.size() == 0;
   }
 
   /**
@@ -113,7 +108,6 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
   @Override
   public MyLinkedList addFirst(V v) {
     writeLock.lock();
-
     try {
       ListNode<V> newNode = new ListNode<>(v);
       newNode.next = dummy.next;
@@ -156,21 +150,21 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public V get(int index) {
-    writeLock.lock();
+    ListNode curr;
+    readLock.lock();
 
     try {
       if (index >= this.size) {
         return null;
       }
-
-      ListNode curr = this.dummy.next;
+      curr = this.dummy.next;
 
       while (index-- > 0) {
         curr = curr.next;
       }
       return (V) curr.v;
     } finally {
-      writeLock.unlock();
+      readLock.unlock();
     }
   }
 
@@ -181,14 +175,14 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public V get(V v) {
+    ListNode curr;
     readLock.lock();
 
     try {
       if (this.size == 0) {
         return null;
       }
-
-      ListNode curr = this.dummy.next;
+      curr = this.dummy.next;
 
       while (curr != null && !curr.v.equals(v)) {
         curr = curr.next;
@@ -207,10 +201,12 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
   @Override
   public int getIndex(V v) {
     int index = 0;
-    ListNode curr = this.dummy.next;
+    ListNode curr;
     readLock.lock();
 
     try {
+      curr = this.dummy.next;
+
       while (curr != null && !curr.v.equals(v)) {
         curr = curr.next;
         index++;
@@ -232,14 +228,14 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public boolean set(V v, int index) {
+    ListNode curr;
     writeLock.lock();
 
     try {
       if (index >= this.size || index < 0) {
         return false;
       }
-
-      ListNode curr = this.dummy.next;
+      curr = this.dummy.next;
 
       while (index-- > 0) {
         curr = curr.next;
@@ -260,10 +256,12 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
   @Override
   public List<V> getAll() {
     List<V> result = new ArrayList<>(); // No need to lock thest two lines.
-    ListNode curr = this.dummy.next;
+    ListNode curr;
     readLock.lock();
 
     try {
+      curr = this.dummy.next;
+
       while (curr != null) {
         result.add((V) curr.v);
         curr = curr.next;
@@ -281,14 +279,14 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public boolean remove(V v) {
+    ListNode curr;
     writeLock.lock();
 
     try {
       if (v == null || isEmpty()) {
         return false;
       }
-
-      ListNode curr = this.dummy;
+      curr = this.dummy;
 
       while (curr.next != null && !v.equals(curr.next.v)) {
         curr = curr.next;
@@ -329,11 +327,12 @@ public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public int getNodeLength() {
+    int count = 0;
+    ListNode curr;
     readLock.lock();
 
     try {
-      ListNode curr = dummy;
-      int count = 0;
+      curr = dummy;
 
       while (curr.next != null) {
         count++;
