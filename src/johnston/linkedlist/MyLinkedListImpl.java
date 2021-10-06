@@ -7,7 +7,7 @@ import java.util.List;
  * This is the implementation of singly linked list. It's the basic linked list without
  * thread-safety.
  */
-public class LinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrencyTestSupport<V> {
+public class MyLinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrencyTestSupport<V> {
   /**
   * List node as an inner class for linked list.
   */
@@ -29,11 +29,11 @@ public class LinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrency
   private ListNode<V> dummy;
   private ListNode<V> end; // End of linked list
 
-  public LinkedListImpl() {
+  public MyLinkedListImpl() {
     this(null);
   }
 
-  public LinkedListImpl(V v) {
+  public MyLinkedListImpl(V v) {
     this.dummy = new ListNode<>(null);
     this.size = 0;
 
@@ -57,7 +57,7 @@ public class LinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrency
    * Add the node to the end of array, return linked list itself.
    */
   @Override
-  public MyLinkedList add(V v) {
+  public MyLinkedList addLast(V v) {
     updateEnd();
     this.end.next = new ListNode<>(v);
     this.end = this.end.next;
@@ -70,7 +70,7 @@ public class LinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrency
    * Add the node to the begin of the linked list.
    */
   @Override
-  public MyLinkedList append(V v) {
+  public MyLinkedList addFirst(V v) {
     ListNode<V> newNode = new ListNode<>(v);
     newNode.next = dummy.next;
     dummy.next = newNode;
@@ -227,7 +227,7 @@ public class LinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrency
 
   @Override
   public void addAndDelete(V v) {
-    add(v);
+    addFirst(v);
     remove(v);
   }
 

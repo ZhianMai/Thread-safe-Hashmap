@@ -1,7 +1,8 @@
 package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.LinkedListThreadSafeImpl;
+import johnston.linkedlist.MyLinkedListImpl;
+import johnston.linkedlist.MyLinkedListThreadSafeImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * This is the basic hash map implementation without thread safety.
  *
- * The bucket uses thread-safe singly linked list.
+ * The bucket uses the basic (not thread-safe) singly linked list.
  */
 public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
   private int size;
@@ -90,15 +91,17 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
     MapPair<K, V> newPair = new MapPair<>(k, null);
 
     if (bucketList[bucketIdx] == null) {
-      bucketList[bucketIdx] = new LinkedListThreadSafeImpl<>();
-      bucketList[bucketIdx].append(newPair);
+      bucketList[bucketIdx] = new MyLinkedListImpl<>();
+      // Using thread-safe linked list would not prevent data racing.
+      // bucketList[bucketIdx] = new MyLinkedListThreadSafeImpl<>();
+      bucketList[bucketIdx].addFirst(newPair);
       size++;
       return;
     }
 
     MapPair<K, V> oldPair = bucketList[bucketIdx].get(newPair);
     if (oldPair == null) { // No such pair
-      bucketList[bucketIdx].append(newPair);
+      bucketList[bucketIdx].addFirst(newPair);
       size++;
     } else { // Update old value
       oldPair.setV(v);
@@ -165,9 +168,11 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
         int bucketIdx = getIndex((K) pair.key);
 
         if (bucketList[bucketIdx] == null) {
-          bucketList[bucketIdx] = new LinkedListThreadSafeImpl<>();
+          bucketList[bucketIdx] = new MyLinkedListImpl<>();
+          // Using thread-safe linked list would not prevent data racing.
+          bucketList[bucketIdx] = new MyLinkedListThreadSafeImpl<>();
         }
-        bucketList[bucketIdx].append(pair);
+        bucketList[bucketIdx].addFirst(pair);
       }
     }
   }
@@ -194,5 +199,11 @@ public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<
       }
     }
     return result;
+  }
+
+  @Override
+  public void addAndDelete(K k, V v) {
+    put(k, v);
+    remove(k);
   }
 }

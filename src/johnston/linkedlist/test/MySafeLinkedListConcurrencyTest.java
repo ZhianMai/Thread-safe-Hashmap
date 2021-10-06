@@ -1,6 +1,6 @@
 package johnston.linkedlist.test;
 
-import johnston.linkedlist.LinkedListThreadSafeImpl;
+import johnston.linkedlist.MyLinkedListThreadSafeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * test. Using integer as the assigned type.
  */
 public class MySafeLinkedListConcurrencyTest {
-   private LinkedListThreadSafeImpl<Integer> intList;
+   private MyLinkedListThreadSafeImpl<Integer> intList;
 
    // Use basic types To test multi-threading test cases correctness.
    // private MyLinkedListImpl<Integer> intList;
@@ -24,7 +24,7 @@ public class MySafeLinkedListConcurrencyTest {
    */
   @BeforeEach
   public void init() {
-    intList = new LinkedListThreadSafeImpl<>();
+    intList = new MyLinkedListThreadSafeImpl<>();
 
     // Use basic types To test multi-threading test cases correctness.
     // intList = new MyLinkedListImpl<>();
@@ -48,7 +48,7 @@ public class MySafeLinkedListConcurrencyTest {
     class ReadWriteThread extends Thread {
       public void run() {
         for (int i = 0; i < testTime; i++) {
-          intList.add(1);
+          intList.addLast(1);
         }
         System.out.println("Write thread (id: " + this.getId() + ") finished.");
       }
@@ -86,7 +86,7 @@ public class MySafeLinkedListConcurrencyTest {
     int testTime = 300;
 
     for (int i = 0; i <= threadCount * testTime; i++) {
-      intList.add(1);
+      intList.addLast(1);
     }
     // Let multiple threads delete data at the same time.
     class DeletionThread extends Thread {

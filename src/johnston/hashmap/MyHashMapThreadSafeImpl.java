@@ -1,6 +1,7 @@
 package johnston.hashmap;
 
-import johnston.linkedlist.LinkedListThreadSafeImpl;
+import johnston.linkedlist.MyLinkedListImpl;
+import johnston.linkedlist.MyLinkedListThreadSafeImpl;
 import johnston.linkedlist.MyLinkedList;
 
 import java.util.Arrays;
@@ -147,15 +148,15 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
       MapPair<K, V> newPair = new MapPair<>(k, null);
 
       if (bucketList[bucketIdx] == null) {
-        bucketList[bucketIdx] = new LinkedListThreadSafeImpl<>();
-        bucketList[bucketIdx].append(newPair);
+        bucketList[bucketIdx] = getNewLinkedList();
+        bucketList[bucketIdx].addFirst(newPair);
         size++;
         return;
       }
 
       MapPair<K, V> oldPair = bucketList[bucketIdx].get(newPair);
       if (oldPair == null) { // No such pair, add to the bucket at index 0.
-        bucketList[bucketIdx].append(newPair);
+        bucketList[bucketIdx].addFirst(newPair);
         size++;
       } else { // Update old value
         oldPair.setV(v);
@@ -253,13 +254,16 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
         int bucketIdx = getIndex((K) pair.key);
 
         if (bucketList[bucketIdx] == null) {
-          bucketList[bucketIdx] = new LinkedListThreadSafeImpl<>();
+          bucketList[bucketIdx] = getNewLinkedList();
         }
-        bucketList[bucketIdx].append(pair);
+        bucketList[bucketIdx].addFirst(pair);
       }
     }
   }
 
+  private MyLinkedList<MapPair> getNewLinkedList() {
+    return new MyLinkedListImpl<>();
+  }
   /**
    * Method for testing only, won't expose to MyHashMap interface.
    */
@@ -288,5 +292,17 @@ public class MyHashMapThreadSafeImpl<K, V> implements MyHashMap<K, V>, HashMapTe
       }
     }
     return result;
+  }
+
+  @Override
+  public void addAndDelete(K k, V v) {
+    writeLock.lock();
+
+    try {
+      put(k, v);
+      remove(k);
+    } finally {
+      writeLock.unlock();
+    }
   }
 }

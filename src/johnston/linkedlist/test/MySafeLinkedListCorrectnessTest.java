@@ -1,7 +1,7 @@
 package johnston.linkedlist.test;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.LinkedListThreadSafeImpl;
+import johnston.linkedlist.MyLinkedListThreadSafeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class MySafeLinkedListCorrectnessTest {
 
   @BeforeEach
   public void init() {
-    stringList = new LinkedListThreadSafeImpl<>();
+    stringList = new MyLinkedListThreadSafeImpl<>();
   }
 
   @Test
@@ -35,7 +35,7 @@ public class MySafeLinkedListCorrectnessTest {
     reset();
 
     for (int i = 0; i < 100; i++) {
-      stringList.add("test");
+      stringList.addLast("test");
     }
 
     stringList.removeAll();
@@ -53,7 +53,7 @@ public class MySafeLinkedListCorrectnessTest {
     int testTime = 100;
 
     for (int i = 0; i < testTime; i++) {
-      stringList.add("test");
+      stringList.addLast("test");
     }
 
     int size = stringList.size();
@@ -69,7 +69,7 @@ public class MySafeLinkedListCorrectnessTest {
     List<String> input = buildStringInput("Test ", testTime);
 
     for (int i = 0; i < testTime; i++) {
-      stringList.add(new String(input.get(i)));
+      stringList.addLast(new String(input.get(i)));
     }
 
     boolean diff = false;
@@ -87,7 +87,7 @@ public class MySafeLinkedListCorrectnessTest {
   @DisplayName("Test ctor")
   public void testCtor() {
     String str = "Test";
-    stringList = new LinkedListThreadSafeImpl<>(new String(str));
+    stringList = new MyLinkedListThreadSafeImpl<>(new String(str));
 
     assertTrue(stringList.size() == 1 && str.equals(stringList.get(0)));
   }
@@ -101,10 +101,10 @@ public class MySafeLinkedListCorrectnessTest {
     List<String> input = buildStringInput("Test ", testTime);
 
     for (int i = 0; i < testTime; i++) {
-      stringList.add(new String(input.get(i)));
+      stringList.addLast(new String(input.get(i)));
 
       if (i == testTime / 2) {
-        stringList.add(bad);
+        stringList.addLast(bad);
       }
     }
 
@@ -130,7 +130,7 @@ public class MySafeLinkedListCorrectnessTest {
     List<String> input = buildStringInput("Test ", testTime);
 
     for (int i = 0; i < testTime; i++) {
-      stringList.add(new String(input.get(i))); // Use different String obj
+      stringList.addLast(new String(input.get(i))); // Use different String obj
     }
 
     boolean success = stringList.remove(new String("Should delete"));
@@ -156,7 +156,7 @@ public class MySafeLinkedListCorrectnessTest {
 
     for (int i = 0; i < testTime; i++) {
       String str = "Test " + i;
-      stringList.add(str); // Use different String obj
+      stringList.addLast(str); // Use different String obj
     }
 
     boolean existsElement = stringList.contains(input.get(testTime / 2));
@@ -181,9 +181,9 @@ public class MySafeLinkedListCorrectnessTest {
     String one = "one";
     String two = "two";
     String three = "three";
-    stringList.append(one);
-    stringList.append(two);
-    stringList.append(three);
+    stringList.addFirst(one);
+    stringList.addFirst(two);
+    stringList.addFirst(three);
 
     assertTrue(stringList.getIndex(one) == 2 &&
         stringList.getIndex(two) == 1 &&
@@ -198,7 +198,7 @@ public class MySafeLinkedListCorrectnessTest {
     int testTime = 100;
     List<String> input = buildStringInput("Test ", testTime);
     for (String str : input) {
-      stringList.add(str); // Use different String obj
+      stringList.addLast(str); // Use different String obj
     }
 
     String newString = "new string";
@@ -225,7 +225,7 @@ public class MySafeLinkedListCorrectnessTest {
     input.set(testTime - 1, end);
 
     for (String str : input) {
-      stringList.add(str); // Use different String obj
+      stringList.addLast(str); // Use different String obj
     }
 
     assertTrue(stringList.getIndex(begin) == 0 &&
@@ -242,9 +242,9 @@ public class MySafeLinkedListCorrectnessTest {
     String strA = "A";
     String strB = "B";
     String strC = "C";
-    stringList.add(new String(strA));
-    stringList.add(new String(strB));
-    stringList.add(new String(strC));
+    stringList.addLast(new String(strA));
+    stringList.addLast(new String(strB));
+    stringList.addLast(new String(strC));
 
     assertTrue(strA.equals(stringList.get(strA)) &&
         strB.equals(stringList.get(strB)) &&

@@ -1,5 +1,6 @@
 package johnston.hashmap.test;
 
+import johnston.hashmap.MyHashMapImpl;
 import johnston.hashmap.MyHashMapThreadSafeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,12 +15,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyHashMapThreadSafeImplConcurrencyTest {
   private MyHashMapThreadSafeImpl<String, Integer> hashMap;
+  // Use the thread-unsafe hash map would fail all tests.
+  // private MyHashMapImpl<String, Integer> hashMap;
   private int globalTestTime;
+  private Random random;
+  private int testFactor;
 
   @BeforeEach
   public void init() {
     hashMap = new MyHashMapThreadSafeImpl<String, Integer>();
+    // hashMap = new MyHashMapImpl<String, Integer>();
     globalTestTime = 100;
+    testFactor = 500;
+    random = new Random();
   }
 
   @Test
@@ -29,112 +37,149 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
     assertTrue((hashMap != null), "Test object init.");
   }
 
-
   @Test
-  @DisplayName("Test hash map removeAll().")
-  public void testRemoveAll() {
+  @DisplayName("Test write data racing.")
+  public void writeDataRace() {
     reset();
-    List<String> keys = buildStringInput("Pair ", globalTestTime);
-    writeSameValue(keys, 1);
+    int threadCount = 10;
+    int testTime = globalTestTime * testFactor;
 
-    assertEquals(globalTestTime, hashMap.getTotalPairCount());
-    assertEquals(globalTestTime, hashMap.size());
-    //printALlBucketSize();
-    reset();
-    assertEquals(0, hashMap.size());
-    assertEquals(0, hashMap.getTotalPairCount());
-  }
-
-  @Test
-  @DisplayName("Test hash map update existing key.")
-  public void testUpdateExistingKey() {
-    reset();
-    List<String> keys = buildStringInput("Pair ", globalTestTime);
-    writeSameValue(keys, 1);
-    assertEquals(globalTestTime, hashMap.getTotalPairCount());
-    assertEquals(globalTestTime, hashMap.size());
-
-    writeSameValue(keys, 2);
-    assertEquals(globalTestTime, hashMap.getTotalPairCount());
-    assertEquals(globalTestTime, hashMap.size());
-  }
-
-  @Test
-  @DisplayName("Test hash map contains key.")
-  public void testContainsKey() {
-    reset();
-    List<String> keys = buildStringInput("Pair ", globalTestTime);
-    writeSameValue(keys, 1);
-
-    for (String key : keys) {
-      assertTrue(hashMap.containsKey(key));
-    }
-
-    keys = buildStringInput("Bad ", globalTestTime / 2);
-    for (String key : keys) {
-      assertTrue(!hashMap.containsKey(key));
-    }
-  }
-
-  @Test
-  @DisplayName("Test hash map update value.")
-  public void testUpdateValue() {
-    reset();
-    List<String> keys = buildStringInput("Pair ", globalTestTime);
-    writeSameValue(keys, 1);
-    writeSameValue(keys, 2);
-
-
-    for (String key : keys) {
-      Integer num = hashMap.get(key);
-      if (num != 2) {
-        assertTrue(false);
+    // Let multiple threads write data at the same time.
+    class ReadWriteThread extends Thread {
+      public void run() {
+        for (int i = 0; i < testTime; i++) {
+          String key = String.valueOf(random.nextDouble()); // Generates unique key.
+          hashMap.put(key, i);
+          assertTrue(hashMap.containsKey(key));
+        }
+        System.out.println("Write thread (id: " + this.getId() + ") finished.");
       }
     }
+
+    // Set up threads
+    Thread[] threadPool = new Thread[threadCount];
+    for (int i = 0; i < threadCount; i++) {
+      threadPool[i] = new ReadWriteThread();
+    }
+
+    // Run threads
+    for (Thread thread : threadPool) {
+      thread.start();
+    }
+
+    // Let the main thread waits until all working threads finished.
+    try {
+      for (Thread thread : threadPool) {
+        thread.join();
+      }
+    } catch (InterruptedException e) {
+    }
+
+    // Basic hash map class would cause NullPtrException.
+    assertEquals(hashMap.getTotalPairCount(), hashMap.size());
+    assertEquals(hashMap.size(), testTime * threadCount);
   }
 
   @Test
-  @DisplayName("Test hash map get non existing key.")
-  public void testNotExistingKey() {
+  @DisplayName("Test delete data racing.")
+  public void deleteDataRace() {
     reset();
-    List<String> keys = buildStringInput("Pair ", globalTestTime);
-    writeSameValue(keys, 1);
-    keys = buildStringInput("Bad ", globalTestTime / 2);
+    int threadCount = 10;
+    int testTime = globalTestTime * 10;
 
-    for (String key : keys) {
-      assertEquals(null, hashMap.get(key));
-      assertTrue(!hashMap.containsKey(key));
+    // Let multiple threads delete data at the same time.
+    class DeletionThread extends Thread {
+      public void run() {
+        List<String> keys = buildStringInput(String.valueOf(random.nextDouble()) , testTime);
+        for (int i = 0; i < testTime * testFactor; i++) {
+          String key = keys.get(i % testFactor);
+          hashMap.put(key, 1);
+          hashMap.remove(key);
+        }
+        System.out.println("Deletion thread (id: " + this.getId() + ") finished.");
+      }
     }
-  }
 
-  @Test
-  @DisplayName("Test hash map remove value.")
-  public void testRemoveValue() {
-    reset();
-    List<String> keys = buildStringInput("Pair ", globalTestTime);
-    writeSameValue(keys, 1);
-
-    for (String key : keys) {
-      assertTrue(hashMap.remove(key));
-      assertEquals(null, hashMap.get(key));
-      assertTrue(!hashMap.containsKey(key));
+    // Set up threads
+    Thread[] threadPool = new Thread[threadCount];
+    for (int i = 0; i < threadCount; i++) {
+      threadPool[i] = new DeletionThread();
     }
-  }
 
-  @Test
-  @DisplayName("Test hash map size.")
-  public void testSize() {
-    reset();
-    List<String> keys = buildStringInput("Pair ", globalTestTime);
-    for (int i = 0; i < globalTestTime; i++) {
-      assertEquals(i, hashMap.size());
-      hashMap.put(keys.get(i), 1);
-      assertEquals(i + 1, hashMap.size());
+    // Run threads
+    for (int i = 0; i < threadCount; i++) {
+      threadPool[i].start();
     }
+
+    // Let the main thread waits until all working threads finished.
+    try {
+      for (Thread thread : threadPool) {
+        thread.join();
+      }
+    } catch (InterruptedException e) {
+    }
+
+    // Basic linked-list would have size inconsistency.
+    assertEquals(hashMap.size(), 0);
+    assertEquals(hashMap.getTotalPairCount(), 0);
   }
 
   private void reset() {
     hashMap.removeAll();
+  }
+
+  int finishedThread = 0;
+  boolean diff = false;
+
+  @Test
+  @DisplayName("Test read-write data racing.")
+  public void testReadWriteDataRace() {
+    reset();
+    int testTime = globalTestTime * testFactor;
+    int threadCount = 10;
+
+    class WriteDeleteThread extends Thread {
+      public void run() {
+        for (int i = 0; i < testTime; i++) {
+          hashMap.addAndDelete(String.valueOf(random.nextDouble()), 1);
+        }
+        System.out.println("Deletion thread (id: " + this.getId() + ") finished.");
+        finishedThread++;
+      }
+    }
+
+    Thread[] threadPool = new Thread[threadCount];
+    for (int i = 0; i < threadPool.length; i++) {
+      threadPool[i] = new WriteDeleteThread();
+    }
+
+    Thread readThread = new Thread() {
+      public void run() {
+        while (finishedThread != threadCount) {
+          int size = hashMap.size();
+          if (size < 0 || size > 1) {
+            diff = true;
+            System.out.println(size + " !!!!!!!!!!!!!!!!");
+            break;
+          }
+        }
+      }
+    };
+
+    for (Thread thread : threadPool) {
+      thread.start();
+    }
+    readThread.start();
+
+    // Let the main thread waits until all working threads finished.
+    try {
+      for (Thread thread : threadPool) {
+        thread.join();
+      }
+      readThread.join();
+    } catch (InterruptedException e) {
+    }
+    assertTrue(!diff);
   }
 
   /**
@@ -153,11 +198,10 @@ public class MyHashMapThreadSafeImplConcurrencyTest {
 
   private List<String> buildStringInput(String prefix, int count) {
     List<String> result = new ArrayList<>();
-    Random rand = new Random();
     int max = 100;
 
     for (int i = 0; i < count; i++) {
-      result.add(prefix + i + " " + rand.nextInt(max));
+      result.add(prefix + i + " " + random.nextInt(max));
     }
     return result;
   }

@@ -15,8 +15,8 @@ public interface MyLinkedList<V> {
   public int getIndex(V v);
   public List<V> getAll();
 
-  public MyLinkedList add(V v);
-  public MyLinkedList append(V v);
+  public MyLinkedList addLast(V v);
+  public MyLinkedList addFirst(V v);
   public boolean set(V v, int index);
 
   public boolean remove(V v);

@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * I choose not to inherit from MyLinkedList class because setting up critical section should be
  * specific, meaning it would override almost all methods.
  */
-public class LinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
+public class MyLinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
     LinkedListConcurrencyTestSupport<V> {
   /**
    * List node as an inner class for linked list.
@@ -45,11 +45,11 @@ public class LinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
   private Lock readLock;
   private Lock writeLock;
 
-  public LinkedListThreadSafeImpl() {
+  public MyLinkedListThreadSafeImpl() {
     this(null);
   }
 
-  public LinkedListThreadSafeImpl(V v) {
+  public MyLinkedListThreadSafeImpl(V v) {
     this.dummy = new ListNode<>(null);
     this.size = 0;
 
@@ -96,7 +96,7 @@ public class LinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
    * Write lock required
    */
   @Override
-  public LinkedListThreadSafeImpl add(V v) {
+  public MyLinkedListThreadSafeImpl addLast(V v) {
     writeLock.lock();
     try {
       updateEnd();
@@ -111,7 +111,7 @@ public class LinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
   }
 
   @Override
-  public MyLinkedList append(V v) {
+  public MyLinkedList addFirst(V v) {
     writeLock.lock();
 
     try {
@@ -312,7 +312,7 @@ public class LinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
    * Write lock required.
    */
   @Override
-  public LinkedListThreadSafeImpl removeAll() {
+  public MyLinkedListThreadSafeImpl removeAll() {
     writeLock.lock();
 
     try {
@@ -353,10 +353,10 @@ public class LinkedListThreadSafeImpl<V> implements MyLinkedList<V>,
     writeLock.lock();
 
     try {
-      add(v);
+      addFirst(v);
       remove(v);
 
-      append(v);
+      addLast(v);
       remove(v);
     } finally {
       writeLock.unlock();

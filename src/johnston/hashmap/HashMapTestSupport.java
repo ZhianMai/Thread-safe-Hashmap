@@ -6,4 +6,5 @@ package johnston.hashmap;
 public interface HashMapTestSupport<K, V> {
   public int[] getAllBucketSize();
   public int getTotalPairCount();
+  public void addAndDelete(K k, V v);
 }
