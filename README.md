@@ -39,6 +39,12 @@ version 1.1
  
  - Applied factory method to Junit testing to reduce redundent codes.
  
+ <p align="center">
+  <img src="/cover%20img/57ecc01c4c5cd160aa630b58238a86b.jpg" style="width:375px;height:500px;"/>
+  <br />
+  <i>Disclaimer: run multi-threading test on one's own risk ;)</i>
+</p>
+ 
 ## Linked List
 
 :link:[link](src/johnston/linkedlist/)
