@@ -14,3 +14,4 @@ public interface LinkedListConcurrencyTesting<V> extends MyLinkedList<V> {
    */
   public void addAndDelete(V v);
 }
+

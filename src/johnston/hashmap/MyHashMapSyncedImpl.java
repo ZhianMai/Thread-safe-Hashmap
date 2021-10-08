@@ -212,4 +212,9 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
     put(k, v);
     remove(k);
   }
+
+  @Override
+  public  synchronized void heavyRead() throws InterruptedException {
+    Thread.sleep(20);
+  }
 }

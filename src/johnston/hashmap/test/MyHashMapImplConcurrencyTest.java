@@ -190,7 +190,7 @@ public class MyHashMapImplConcurrencyTest {
   @DisplayName("Test heavy read data performance")
   public void testReadPerformance() {
     reset();
-    int testTime = globalTestTime * testFactor;
+    int testTime = globalTestTime;
     int threadCount = 6;
     List<String> keyList = buildStringInput("Test ", testTime);
     writeSameValue(keyList, 1);
@@ -198,9 +198,12 @@ public class MyHashMapImplConcurrencyTest {
 
     class ReadThread extends Thread {
       public void run() {
-        int total = testTime * 30;
-        for (int i = 0; i < total; i++) {
-          hashMap.containsKey(key);
+        for (int i = 0; i < testTime; i++) {
+          try {
+            hashMap.heavyRead();
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
         }
         System.out.println("Read thread (id: " + this.getId() + ") finished.");
       }

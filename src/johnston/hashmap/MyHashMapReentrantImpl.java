@@ -317,4 +317,15 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
       writeLock.unlock();
     }
   }
+
+  @Override
+  public void heavyRead() throws InterruptedException {
+    readLock.lock();
+
+    try {
+      Thread.sleep(20);
+    } finally {
+      readLock.unlock();
+    }
+  }
 }

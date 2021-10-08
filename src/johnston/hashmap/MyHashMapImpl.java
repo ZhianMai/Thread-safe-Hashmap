@@ -206,4 +206,9 @@ public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
     put(k, v);
     remove(k);
   }
+
+  @Override
+  public void heavyRead() throws InterruptedException {
+    Thread.sleep(20);
+  }
 }
