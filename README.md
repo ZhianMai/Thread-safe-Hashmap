@@ -4,7 +4,17 @@ This repo contains implementations of thread-safe linked list, hash map and thei
 
 ## Update
 
-version 1.1 
+### version 1.2
+- Improved the multi-threading read method to show that on heavy read situations, the read-write lock does have significant better performance than synchronized keyword.
+  - The old method was to run <i>hashMap.contains(key)</i> a lot of times, perhaps the bottleneck is the memory R/W speed making read-write lock has the same runtime as synchronized keyword.
+  - New heavy read method simply makes the current sleep 20 milli seconds, so no such memory R/W speed bottleneck.
+  - The multi-threading heavy read test starts 6 threads, and the result is:
+    - Basic benchmark (no thread-safety): 30 sec;
+    - Synchronized keyword: 3 min;
+    - Read-write lock: 30 sec.
+  - It proves that the synchronized area only allows one reading thread entered at a time, while read-write lock allows all reading thread to enter so the time is as fast as the benchmark!
+  
+### version 1.1 
  - Rename hash map testing method interface to <b><i>MyHashMapTesting</i></b>, and it extends <b><i>MyHashMap</i></b> interface. Now all hash map implementation classes are implemented <b>MyhashMapTesting</b> only.
 
  - Create a factory class for hash map object creation. Use enum <b><i>ThreadSafePolicy</i></b> to decide which types of implementation objects to get:
