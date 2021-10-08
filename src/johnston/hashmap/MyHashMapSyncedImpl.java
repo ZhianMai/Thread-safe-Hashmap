@@ -12,7 +12,7 @@ import java.util.List;
  * This class uses synchronized keyword to ensure thread-safety instead of read-write lock.
  * It's designed for performance testing.
  */
-public class MyHashMapSyncedImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
+public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;

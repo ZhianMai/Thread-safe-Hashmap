@@ -12,7 +12,7 @@ import java.util.List;
  *
  * The bucket uses the basic (not thread-safe) singly linked list.
  */
-public class MyHashMapImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
+public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;

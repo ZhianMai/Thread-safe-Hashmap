@@ -1,6 +1,9 @@
 package johnston.hashmap.test;
 
-import johnston.hashmap.MyHashMapImpl;
+import johnston.hashmap.MyHashMap;
+import johnston.hashmap.MyHashMapFactory;
+import johnston.hashmap.MyHashMapTesting;
+import johnston.hashmap.ThreadSafePolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyHashMapImplCorrectnessTest {
-  private MyHashMapImpl<String, Integer> hashMap;
+  private MyHashMapTesting<String, Integer> hashMap;
   private int globalTestTime;
 
   @BeforeEach
   public void init() {
-    hashMap = new MyHashMapImpl<String, Integer>();
+    // Use factory to create an object for testing.
+    // Select NoSync, SyncKeyword, or ReadWriteLock.
+    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock);
     globalTestTime = 100;
   }
 

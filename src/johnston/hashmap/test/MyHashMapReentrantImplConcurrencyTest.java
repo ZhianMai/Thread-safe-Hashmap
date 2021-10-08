@@ -1,6 +1,9 @@
 package johnston.hashmap.test;
 
+import johnston.hashmap.MyHashMapFactory;
 import johnston.hashmap.MyHashMapReentrantImpl;
+import johnston.hashmap.MyHashMapTesting;
+import johnston.hashmap.ThreadSafePolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,25 +16,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyHashMapReentrantImplConcurrencyTest {
-  private MyHashMapReentrantImpl<String, Integer> hashMap;
-
-  // Use the thread-safe hash map with synchronized keyword
-  // private MyHashMapSyncedImpl<String, Integer> hashMap;
-
-  // Use the thread-unsafe hash map would fail all tests.
-  // private MyHashMapImpl<String, Integer> hashMap;
-
+  private MyHashMapTesting<String, Integer> hashMap;
   private int globalTestTime;
   private Random random;
   private int testFactor;
 
   @BeforeEach
   public void init() {
-    hashMap = new MyHashMapReentrantImpl<String, Integer>();
-    // hashMap = new MyHashMapSyncedImpl<String, Integer>();
-    // hashMap = new MyHashMapImpl<String, Integer>();
+    // Use factory to create an object for testing.
+    // Select NoSync, SyncKeyword, or ReadWriteLock.
+    // The NoSync type would definitely fail all test methods at some point.
+    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock);
     globalTestTime = 1000;
-    testFactor = 1000;
+    testFactor = 100;
     random = new Random();
   }
 

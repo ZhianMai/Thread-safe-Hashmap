@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * -> Read threads mutually exclude write threads.
  * -> Write threads mutually exclude each other.
  */
-public class MyHashMapReentrantImpl<K, V> implements MyHashMap<K, V>, HashMapTestSupport<K, V> {
+public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;
