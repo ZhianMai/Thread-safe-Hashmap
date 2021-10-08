@@ -15,7 +15,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MyHashMapReentrantImplConcurrencyTest {
+public class MyHashMapImplConcurrencyTest {
   private MyHashMapTesting<String, Integer> hashMap;
   private int globalTestTime;
   private Random random;

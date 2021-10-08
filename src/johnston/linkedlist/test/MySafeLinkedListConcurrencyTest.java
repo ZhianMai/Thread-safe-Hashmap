@@ -137,7 +137,7 @@ public class MySafeLinkedListConcurrencyTest {
         for (int i = 0; i < testTime; i++) {
           intList.addAndDelete(1);
         }
-        System.out.println("Deletion thread (id: " + this.getId() + ") finished.");
+        System.out.println("Read-write thread (id: " + this.getId() + ") finished.");
         finishedThread++;
       }
     }

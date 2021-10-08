@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * specific, meaning it would override almost all methods.
  */
 public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
-    LinkedListConcurrencyTestSupport<V> {
+    LinkedListConcurrencyTesting<V> {
   /**
    * List node as an inner class for linked list.
    */

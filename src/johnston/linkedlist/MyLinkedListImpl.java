@@ -7,7 +7,7 @@ import java.util.List;
  * This is the implementation of singly linked list. It's the basic linked list without
  * thread-safety.
  */
-public class MyLinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrencyTestSupport<V> {
+public class MyLinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrencyTesting<V> {
   /**
   * List node as an inner class for linked list.
   */
