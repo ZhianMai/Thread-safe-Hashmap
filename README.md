@@ -1,6 +1,6 @@
 # Thread-safe Linked List and Hash Map (in Java)
 
-This repo contains the implementation of thread-safe linked list and hash map and Junit test cases.
+This repo contains implementations of thread-safe linked list, hash map and their Junit tests.
 
 ## Update
 
