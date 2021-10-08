@@ -83,7 +83,7 @@ Test contains:
 - Hash map correctness test cases;
 - Hash map multi-threading test cases.
 
-Interface <i>MyHashMap</i> provides methods:
+Interface <i>MyLinkedList</i> provides methods:
 - int size();
 - boolean isEmpty();
 - boolean isSameHash(K one, K two);
