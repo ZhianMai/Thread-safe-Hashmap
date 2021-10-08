@@ -5,7 +5,7 @@ This repo contains implementations of thread-safe linked list, hash map and thei
 ## Update
 
 ### version 1.2
-- Improved the multi-threading read method to show that on heavy read situations, the read-write lock does have significant better performance than synchronized keyword.
+- Improved the multi-threading read method to show that on heavy reading situations, the read-write lock does have significant better performance than synchronized keyword.
   - The old method was to run <i>hashMap.contains(key)</i> a lot of times, perhaps the bottleneck is the memory R/W speed making read-write lock has the same runtime as synchronized keyword.
   - New heavy read method simply makes the current sleep 20 milli seconds, so no such memory R/W speed bottleneck.
   - The multi-threading heavy read test starts 6 threads, and the result is:
