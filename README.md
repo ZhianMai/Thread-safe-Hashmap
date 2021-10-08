@@ -12,7 +12,7 @@ This repo contains implementations of thread-safe linked list, hash map and thei
     - Basic benchmark (no thread-safety): 30 sec;
     - Synchronized keyword: 3 min;
     - Read-write lock: 30 sec.
-  - It proves that the synchronized area only allows one reading thread entered at a time, while read-write lock allows all reading thread to enter so the time is as fast as the benchmark!
+  - It proves that the synchronized area only allows one reading thread entered at a time, while read-write lock allows all reading threads to enter so its runtime time is as fast as the benchmark!
   
 ### version 1.1 
  - Rename hash map testing method interface to <b><i>MyHashMapTesting</i></b>, and it extends <b><i>MyHashMap</i></b> interface. Now all hash map implementation classes are implemented <b>MyhashMapTesting</b> only.
