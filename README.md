@@ -2,6 +2,41 @@
 
 This repo contains the implementation of thread-safe linked list and hash map and Junit test cases.
 
+## Update
+
+version 1.1 
+ - Rename hash map testing method interface to <b>MyHashMapTesting</b>. And now it extends MyHashMap interface. ALl its implementation methods are implements <b>MyhashMapTesting</b> only.
+
+ - Create a factory class for hash map object creation. Use enum <b>ThreadSafePolicy</b> to decide which types of implementations:
+   - <i>NoSync</i>: return <i>MyHashMapImpl</i> object.
+   - <i>SyncKeyword</i>: return <i>MyHashMapSyncedImpl</i> object.
+   - <i>ReadWriteLock</i>: return <i>MyHashMapReentrantImpl</i> object.
+
+ Example:
+ ```Java
+ // Hash map for general use (no debugging methods)
+ private MyHashMap<ClassA, ClassB> hashMap;
+ 
+ // Create hash map without thread-safety policy
+ hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.NoSync);
+ 
+ // Create hash map without thread-safety policy and given capacity and loadFactor
+ hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.NoSync, 666, 0.4f);
+ 
+ // Create hash map with thread-safety using synchronized keyword
+ hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.SyncKeyword);
+ 
+ // Create hash map with thread-safety using ReentrantReadWriteLock
+ hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.ReadWriteLock);
+ 
+ // Hash map for debugging (interface MyHashMapTesting)
+  private MyHashMapTesting<ClassA, ClassB> hashMap;
+ 
+  hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync);
+  hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync, 666, 0.4f);
+ // Same usage as above, but with different method name.
+ ```
+ 
 ## Linked List
 
 :link:[link](src/johnston/linkedlist/)
