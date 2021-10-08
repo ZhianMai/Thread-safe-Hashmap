@@ -17,16 +17,16 @@ version 1.1
  // Hash map for general use (no debugging methods)
  private MyHashMap<ClassA, ClassB> hashMap;
  
- // Create hash map without thread-safety policy
+ // Create a MyHashMap object without thread-safety policy
  hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.NoSync);
  
- // Create hash map without thread-safety policy and given capacity and loadFactor
+ // Create a MyHashMap object without thread-safety policy and given capacity and loadFactor
  hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.NoSync, 666, 0.4f);
  
- // Create hash map with thread-safety using synchronized keyword
+ // Create a MyHashMap object with thread-safety using synchronized keyword
  hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.SyncKeyword);
  
- // Create hash map with thread-safety using ReentrantReadWriteLock
+ // Createa MyHashMap object with thread-safety using ReentrantReadWriteLock
  hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.ReadWriteLock);
  
  // Hash map for debugging (interface MyHashMapTesting)
@@ -34,7 +34,7 @@ version 1.1
  
   hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync);
   hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync, 666, 0.4f);
- // Same usage as the general use type above, but with different method name.
+ // Same usage as the MyHashMap above, but with different method names.
  ```
  
  - Applied factory method to Junit testing to reduce redundent codes.
