@@ -67,7 +67,7 @@ Test contains:
 - Linked list correctness test cases;
 - Linked list multi-threading test cases.
 
-Interface <i>MyHashMap</i> provides methods:
+Interface <i>MyLinkedList</i> provides methods:
  - int size();
  - boolean isEmpty();
  - boolean contains(V v);
@@ -93,7 +93,7 @@ Test contains:
 - Hash map correctness test cases;
 - Hash map multi-threading test cases.
 
-Interface <i>MyLinkedList</i> provides methods:
+Interface <i>MyHashMap</i> provides methods:
 - int size();
 - boolean isEmpty();
 - boolean isSameHash(K one, K two);
@@ -115,4 +115,4 @@ In general, the ReentrantReadWriteLock has better flexibility than synchronized 
 
 But the performance test on a single machine shows that ReentrantReadWriteLock does not have significant speedup than synchronized keyword. Maybe the runtime overhead is higher than traditional synchronized keyword. I tried minimizing the critical sections for read-write look, but the performance has no significant improvement, and it's easier to cause errors than locking the whole method.
 
-The hash map buckets use basic or thread-safe linked-list can both pass the multi-threading tests. Since all write operations are locked, so the bucket list is guaranteed only one thread enter & write/delte at the same time.
+The hash map buckets use basic or thread-safe linked-list can both pass the multi-threading tests. Since all write operations are locked, so the bucket list is guaranteed only one thread inside to write/delte at each time.
