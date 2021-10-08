@@ -18,9 +18,10 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
   private MyLinkedList<MapPair>[] bucketList;
   private final float loadFactor;
 
-  public static final int DEFAULT_CAPACITY = 16;
-  public static final int REHASH_FACTOR = 2;
-  public static final float DEFAULT_LOAD_FACTOR = 0.5f;
+  private static final int DEFAULT_CAPACITY = 16;
+  private static final int REHASH_FACTOR = 2;
+  private static final float DEFAULT_LOAD_FACTOR = 0.5f;
+  private static final int THREAD_SLEEP_MILLI_SEC = 20;
 
   public MyHashMapSyncedImpl(int capacity, float loadFactor) {
     this.capacity = capacity;
@@ -71,14 +72,8 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
    * Return true if key exists, otherwise false.
    */
   @Override
-  public synchronized boolean containsKey(K k) {
-    int bucketIdx = getIndex(k);
-    if (bucketList[bucketIdx] == null) {
-      return false;
-    }
-    MapPair<K, V> dummy = new MapPair<>(k, null);
-
-    return bucketList[bucketIdx].contains(dummy);
+  public boolean containsKey(K k) {
+    return get(k) != null;
   }
 
   /**
@@ -88,7 +83,7 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
   public synchronized void put(K k, V v) {
     rehash();
     int bucketIdx = getIndex(k);
-    MapPair<K, V> newPair = new MapPair<>(k, null);
+    MapPair<K, V> newPair = new MapPair<>(k, v);
 
     if (bucketList[bucketIdx] == null) {
       bucketList[bucketIdx] = getNewLinkedList();
@@ -213,6 +208,9 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
     remove(k);
   }
 
+  /**
+   *  Simulates heavy time-consuming read data work.
+   */
   @Override
   public  synchronized void heavyRead() throws InterruptedException {
     Thread.sleep(20);

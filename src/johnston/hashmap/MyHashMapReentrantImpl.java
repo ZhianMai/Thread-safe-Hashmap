@@ -26,9 +26,10 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   private MyLinkedList<MapPair>[] bucketList;
   private final float loadFactor;
 
-  public static final int DEFAULT_CAPACITY = 16;
-  public static final int REHASH_FACTOR = 2;
-  public static final float DEFAULT_LOAD_FACTOR = 0.5f;
+  private static final int DEFAULT_CAPACITY = 16;
+  private static final int REHASH_FACTOR = 2;
+  private static final float DEFAULT_LOAD_FACTOR = 0.5f;
+  private static final int THREAD_SLEEP_MILLI_SEC = 20;
 
   private ReentrantReadWriteLock reentrantReadWriteLock;
   private Lock readLock;
@@ -115,25 +116,11 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   }
 
   /**
-   * Return true if key exists, otherwise false.
-   * <p>
-   * Read lock required.
+   * Return true if key exists, otherwise false. No need to lock since get() is locked.
    */
   @Override
   public boolean containsKey(K k) {
-    readLock.lock();
-
-    try {
-      int bucketIdx = getIndex(k);
-      if (bucketList[bucketIdx] == null) {
-        return false;
-      }
-      MapPair<K, V> dummy = new MapPair<>(k, null);
-
-      return bucketList[bucketIdx].contains(dummy);
-    } finally {
-      readLock.unlock();
-    }
+    return get(k) != null;
   }
 
   /**
@@ -144,7 +131,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   @Override
   public void put(K k, V v) {
     int bucketIdx;
-    MapPair<K, V> newPair = new MapPair<>(k, null);
+    MapPair<K, V> newPair = new MapPair<>(k, v);
     writeLock.lock();
 
     try {
@@ -318,12 +305,15 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
     }
   }
 
+  /**
+   *  Simulates heavy time-consuming read data work.
+   */
   @Override
   public void heavyRead() throws InterruptedException {
     readLock.lock();
 
     try {
-      Thread.sleep(20);
+      Thread.sleep(THREAD_SLEEP_MILLI_SEC);
     } finally {
       readLock.unlock();
     }

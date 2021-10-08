@@ -1,6 +1,5 @@
 package johnston.hashmap.test;
 
-import johnston.hashmap.MyHashMap;
 import johnston.hashmap.MyHashMapFactory;
 import johnston.hashmap.MyHashMapTesting;
 import johnston.hashmap.ThreadSafePolicy;
@@ -23,7 +22,7 @@ public class MyHashMapImplCorrectnessTest {
   public void init() {
     // Use factory to create an object for testing.
     // Select NoSync, SyncKeyword, or ReadWriteLock.
-    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock);
+    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.NoSync);
     globalTestTime = 100;
   }
 
@@ -65,7 +64,7 @@ public class MyHashMapImplCorrectnessTest {
   }
 
   @Test
-  @DisplayName("Test hash map contains key.")
+  @DisplayName("Test hash map put(), get(), and containsKey().")
   public void testContainsKey() {
     reset();
     List<String> keys = buildStringInput("Pair ", globalTestTime);
@@ -73,6 +72,7 @@ public class MyHashMapImplCorrectnessTest {
 
     for (String key : keys) {
       assertTrue(hashMap.containsKey(key));
+      assertEquals(hashMap.get(key), 1);
     }
 
     keys = buildStringInput("Bad ", globalTestTime / 2);
@@ -92,9 +92,7 @@ public class MyHashMapImplCorrectnessTest {
 
     for (String key : keys) {
       Integer num = hashMap.get(key);
-      if (num != 2) {
-        assertTrue(false);
-      }
+      assertEquals(num, 2);
     }
   }
 

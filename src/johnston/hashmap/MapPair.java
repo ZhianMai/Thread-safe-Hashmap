@@ -22,7 +22,7 @@ public class MapPair<K, V> {
    * iff two keys are equals.
    */
   @Override
-  public boolean equals(Object o) {
+  public final boolean equals(Object o) {
     if (o == this) {
       return true;
     }

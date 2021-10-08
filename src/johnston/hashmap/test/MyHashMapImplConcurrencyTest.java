@@ -26,7 +26,7 @@ public class MyHashMapImplConcurrencyTest {
     // Use factory to create an object for testing.
     // Select NoSync, SyncKeyword, or ReadWriteLock.
     // The NoSync type would definitely fail all test methods at some point.
-    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock);
+    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.SyncKeyword);
     globalTestTime = 1000;
     testFactor = 100;
     random = new Random();
