@@ -15,9 +15,9 @@ This repo contains implementations of thread-safe linked list, hash map and thei
   - It proves that the synchronized keyword hash map only allows only one reading thread in the critical section at a time, while the read-write lock hash map allows all reading threads to enter so its runtime time is as fast as the benchmark!
   
 ### Version 1.1 
- - Rename hash map testing method interface to <b><i>MyHashMapTesting</i></b>, and it extends <b><i>MyHashMap</i></b> interface. Now all hash map implementation classes are implemented <b>MyhashMapTesting</b> only.
+ - Renamed hash map testing method interface to <b><i>MyHashMapTesting</i></b>, and it extends <b><i>MyHashMap</i></b> interface. Now all hash map implementation classes are implemented <b>MyhashMapTesting</b> only.
 
- - Create a factory class for hash map object creation. Use enum <b><i>ThreadSafePolicy</i></b> to decide which types of implementation objects to get:
+ - Created a factory class for hash map object creation, and the factory class accepts the enum <b><i>ThreadSafePolicy</i></b> to decide which types of implementation objects to get:
    - <i>NoSync</i>: return <i>MyHashMapImpl</i> object.
    - <i>SyncKeyword</i>: return <i>MyHashMapSyncedImpl</i> object.
    - <i>ReadWriteLock</i>: return <i>MyHashMapReentrantImpl</i> object.
