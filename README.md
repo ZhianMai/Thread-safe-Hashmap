@@ -34,7 +34,7 @@ version 1.1
  
   hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync);
   hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync, 666, 0.4f);
- // Same usage as above, but with different method name.
+ // Same usage as the general use type above, but with different method name.
  ```
  
  - Applied factory method to Junit testing to reduce redundent codes.
