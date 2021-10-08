@@ -37,6 +37,8 @@ version 1.1
  // Same usage as above, but with different method name.
  ```
  
+ - Applied factory method to Junit testing to reduce redundent codes.
+ 
 ## Linked List
 
 :link:[link](src/johnston/linkedlist/)
