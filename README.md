@@ -5,7 +5,7 @@ This repo contains the implementation of thread-safe linked list and hash map an
 ## Update
 
 version 1.1 
- - Rename hash map testing method interface to <b>MyHashMapTesting</b>. And now it extends MyHashMap interface. ALl its implementation methods are implements <b>MyhashMapTesting</b> only.
+ - Rename hash map testing method interface to <b><i>MyHashMapTesting</i></b>. And now it extends <b><i>MyHashMap</i></b> interface. Now all its implementation classes are implemented <b>MyhashMapTesting</b> only.
 
  - Create a factory class for hash map object creation. Use enum <b>ThreadSafePolicy</b> to decide which types of implementations:
    - <i>NoSync</i>: return <i>MyHashMapImpl</i> object.
@@ -40,7 +40,7 @@ version 1.1
  - Applied factory method to Junit testing to reduce redundent codes.
  
  <p align="center">
-  <img src="/cover%20img/57ecc01c4c5cd160aa630b58238a86b.jpg" style="width:375px;height:500px;"/>
+  <img src="/cover%20img/57ecc01c4c5cd160aa630b58238a86b.jpg" style="width:300px;height:400px;"/>
   <br />
   <i>Disclaimer: run multi-threading test on one's own risk ;)</i>
 </p>
