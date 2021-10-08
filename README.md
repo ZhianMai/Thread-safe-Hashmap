@@ -30,10 +30,10 @@ version 1.1
  hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.ReadWriteLock);
  
  // Hash map for debugging (interface MyHashMapTesting)
-  private MyHashMapTesting<ClassA, ClassB> hashMap;
+ private MyHashMapTesting<ClassA, ClassB> hashMap;
  
-  hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync);
-  hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync, 666, 0.4f);
+ hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync);
+ hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync, 666, 0.4f);
  // Same usage as the MyHashMap above, but with different method names.
  ```
  
