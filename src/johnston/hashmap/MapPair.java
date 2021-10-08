@@ -17,6 +17,10 @@ public class MapPair<K, V> {
     this.val = val;
   }
 
+  /**
+   * Guarantee that given a key, the hash map would return the corresponding key-val pair
+   * iff two keys are equals.
+   */
   @Override
   public boolean equals(Object o) {
     if (o == this) {
