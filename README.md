@@ -7,7 +7,7 @@ This repo contains the implementation of thread-safe linked list and hash map an
 version 1.1 
  - Rename hash map testing method interface to <b><i>MyHashMapTesting</i></b>. And now it extends <b><i>MyHashMap</i></b> interface. Now all its implementation classes are implemented <b>MyhashMapTesting</b> only.
 
- - Create a factory class for hash map object creation. Use enum <b>ThreadSafePolicy</b> to decide which types of implementations:
+ - Create a factory class for hash map object creation. Use enum <b><i>ThreadSafePolicy</i></b> to decide get which types of implementation objects:
    - <i>NoSync</i>: return <i>MyHashMapImpl</i> object.
    - <i>SyncKeyword</i>: return <i>MyHashMapSyncedImpl</i> object.
    - <i>ReadWriteLock</i>: return <i>MyHashMapReentrantImpl</i> object.
