@@ -84,12 +84,14 @@ while (iterator.hasNext()) {
  // Example of creating hash map object using factory class.
  // Hash map for general use (no debugging methods)
  private MyHashMap<ClassA, ClassB> hashMap;
+ private int capacity = 666; // Init hash map capacity
+ private float loadFactor = 0.4f; // Init hash map load factor for rehashing
  
  // Create a MyHashMap object without thread-safety policy
  hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.NoSync);
  
  // Create a MyHashMap object without thread-safety policy and given capacity and loadFactor
- hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.NoSync, 666, 0.4f);
+ hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.NoSync, capacity, loadFactor);
  
  // Create a MyHashMap object with thread-safety using synchronized keyword
  hashMap = MyHashMapFactory.getMyHashMap(ThreadSafePolicy.SyncKeyword);
@@ -101,7 +103,7 @@ while (iterator.hasNext()) {
  private MyHashMapTesting<ClassA, ClassB> hashMap;
  
  hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync);
- hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync, 666, 0.4f);
+ hashMap = MyHashMapFactory.MyHashMapTesting(ThreadSafePolicy.NoSync, capacity, loadFactor);
  // Same usage as the MyHashMap above, but with different method names.
  ```
  
