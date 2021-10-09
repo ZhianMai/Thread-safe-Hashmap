@@ -1,6 +1,8 @@
 # Thread-safe Linked List and Hash Map (in Java)
 
-This repo contains implementations of thread-safe linked list, hash map and their JUnit tests. Implementations include: enum, generic, Iterable<>, factory pattern, ReentrantReadWriteLock, multi-threading testing, and more coming...
+This repo contains implementations of thread-safe linked list, hash map and their JUnit tests.
+
+Implementations include: enum, generic, Iterable<>, factory pattern, ReentrantReadWriteLock, multi-threading testing, and more coming...
 
 ## Update
 
