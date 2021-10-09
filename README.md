@@ -18,12 +18,11 @@ Implementations include: generic, Iterable<>, factory pattern with enum, Reentra
    - If the iterator caller does not finish iterating, then the write thread is starvation since iterator holds the read lock.
    - The hash map iterator is to traverse each bucket's linked list one by one and call each one's iterator.
  
-- Example:
+- Iteration Example:
  ```Java
- // Example of creating hash map object using factory class.
  private MyLinkedList<String> stringList = new MyLinkedListReentrantLockImpl<>();
  
-// Input something
+// Input something...
 
 for (String str : stringList) {
     // do something...
@@ -39,7 +38,7 @@ while (listIterator.hasNext()) {
 private MyHashMapTesting<String, Integer> hashMap = 
     MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock);
 
-// Input something
+// Input something...
 
 for (MapPair<String, Integer> mapPair : hashMap) {
    String key = mapPair.key;
@@ -80,8 +79,9 @@ while (iterator.hasNext()) {
    - <i>SyncKeyword</i>: return <i>MyHashMapSyncedImpl</i> object.
    - <i>ReadWriteLock</i>: return <i>MyHashMapReentrantImpl</i> object.
 
- Example:
+ Example of object creation using factory class:
  ```Java
+ // Example of creating hash map object using factory class.
  // Hash map for general use (no debugging methods)
  private MyHashMap<ClassA, ClassB> hashMap;
  
