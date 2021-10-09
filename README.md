@@ -114,7 +114,7 @@ while (iterator.hasNext()) {
  
 ## Linked List
 
-:link:[link](src/johnston/linkedlist/)
+:link:[link](src/main/java/johnston/linkedlist/)
 
 Interface <i>MyLinkedList</i> provides methods:
  - extends Iterable<V>
@@ -145,7 +145,7 @@ Testing contains:
   
 ## Hash Map
 
-:link:[link](src/johnston/hashmap/)
+:link:[link](src/main/java/johnston/hashmap/)
 
 Interface <i>MyHashMap</i> provides methods:
 - extends Iterable<V>
