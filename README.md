@@ -9,7 +9,7 @@ This repo contains implementations of thread-safe linked list, hash map and thei
 - Implemented iterator for linked list and hash map. Now they <b>both support for-each loop</b> iteration like Java array!
    - Notice that their iterators are not thread-safe, and in general, iterators should not be thread-safe.
    - If the iterator caller does not finish iterating, then the write thread is starvation since iterator holds the read lock.
-   - The hash map iterator is to traverse each bucket's linked list one by one and call their iterator.
+   - The hash map iterator is to traverse each bucket's linked list one by one and call each one's iterator.
  
 - Example:
  ```Java
