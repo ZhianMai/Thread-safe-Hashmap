@@ -6,6 +6,10 @@ Implementations include: generic, Iterable<>, factory pattern with enum, Reentra
 
 ## Update
 
+### Version 1.4
+- Testing shows that the bucket has obvious "primary clustering". The hash code for the key was key.hashcode(). Object like Integer just return the integer itself, and this causes clustered block. Now the hash() in hash map changed to MurmurHash hashing. It's a performance efficient, non-cryptographic hash function. The test result shows that it can solve clustered block very well.
+- The project already added Maven support for future extension.
+
 ### Version 1.3
 
 - Implemented iterator for linked list and hash map. Now they <b>both support for-each loop</b> iteration like Java array!
@@ -64,7 +68,7 @@ while (iterator.hasNext()) {
     - Basic benchmark (no thread-safety): 30 sec;
     - Synchronized keyword: 3 min;
     - Read-write lock: 30 sec.
-  - It proves that the synchronized keyword hash map only allows only one reading thread in the critical section at a time, while the read-write lock hash map allows all reading threads to enter so its runtime time is as fast as the benchmark!
+  - It proves that the synchronized keyword hash map allows only one reading thread in the critical section at a time, while the read-write lock hash map allows all reading threads to enter so its runtime time is as fast as the benchmark!
   
 ### Version 1.1 
  - Renamed hash map testing method interface to <b><i>MyHashMapTesting</i></b>, and it extends <b><i>MyHashMap</i></b> interface. Now all hash map implementation classes are implemented <b>MyhashMapTesting</b> only.
