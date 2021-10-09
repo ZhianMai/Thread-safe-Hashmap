@@ -21,7 +21,7 @@ public class MyHashMapImplCorrectnessTest {
   public void init() {
     // Use factory to create an object for testing.
     // Select NoSync, SyncKeyword, or ReadWriteLock.
-    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock);
+    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock, 16, 0.5f);
     globalTestTime = 100;
   }
 
