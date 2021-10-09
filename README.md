@@ -7,7 +7,7 @@ Implementations include: generic, Iterable<>, factory pattern with enum, Reentra
 ## Update
 
 ### Version 1.4
-- Testing shows that the bucket has obvious "primary clustering". The hash code for the key was key.hashcode(). Object like Integer just return the integer itself, and this causes clustered block. Now the hash() in hash map changed to MurmurHash hashing. It's a performance efficient, non-cryptographic hash function. The test result shows that it can solve clustered block very well.
+- Testing shows that the bucket has obvious "primary clustering". The hash code of the key was key.hashcode(). Object like Integer just returns the integer, and this causes clustered block. Now hashing changed to MurmurHash, a performance efficient, non-cryptographic hash function. It avoids clustered block very well.
 - The project already added Maven support for future extension.
 
 ### Version 1.3
