@@ -8,7 +8,7 @@ Implementations include: generic, Iterable<>, factory pattern with enum, Reentra
 
 ### Version 1.4
 - The project already added Maven support for future extension.
-- Testing shows that the bucket has obvious "primary clustering". The hash code of the key was key.hashcode(). Object like Integer just returns the integer, and this causes clustered block. Now hashing changed to MurmurHash, a performance efficient, non-cryptographic hash function. It avoids clustered block very well. But can the locality of reference really benefit runtime? The Java hashMap also uses object.hashcode() as well. But if I change to open addressing to handle hash collision, then this step is a must.
+- Testing shows that the bucket has obvious "primary clustering". The hash code of the key was key.hashcode(). Object like Integer just returns the integer, and this causes clustered block. Now hashing changed to <i>MurmurHash</i>, a performance efficient, non-cryptographic hash function. It avoids clustered block very well. But can the locality of reference really benefit runtime? The Java hashMap also uses object.hashcode() as well. But if I change to open addressing to handle hash collision, then this step is a must.
 
 
 ### Version 1.3
