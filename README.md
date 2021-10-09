@@ -1,6 +1,6 @@
 # Thread-safe Linked List and Hash Map (in Java)
 
-This repo contains implementations of thread-safe linked list, hash map and their JUnit tests.
+This repo contains implementations of thread-safe linked list, hash map and their JUnit tests. Implementations include: enum, generic, Iterable<>, factory pattern, ReentrantReadWriteLock, multi-threading testing, and more coming...
 
 ## Update
 
@@ -67,7 +67,7 @@ while (iterator.hasNext()) {
 ### Version 1.1 
  - Renamed hash map testing method interface to <b><i>MyHashMapTesting</i></b>, and it extends <b><i>MyHashMap</i></b> interface. Now all hash map implementation classes are implemented <b>MyhashMapTesting</b> only.
 
- - Created a factory class for hash map object creation, and the factory class accepts the enum <b><i>ThreadSafePolicy</i></b> to decide which types of hash map objects to get:
+ - Created a factory class <i>MyHashMapFactory</i> for hash map object creation, and the factory class accepts the enum <b><i>ThreadSafePolicy</i></b> to decide which types of hash map objects to get:
    - <i>NoSync</i>: return <i>MyHashMapImpl</i> object.
    - <i>SyncKeyword</i>: return <i>MyHashMapSyncedImpl</i> object.
    - <i>ReadWriteLock</i>: return <i>MyHashMapReentrantImpl</i> object.
