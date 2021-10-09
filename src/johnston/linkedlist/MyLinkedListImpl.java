@@ -1,13 +1,14 @@
 package johnston.linkedlist;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * This is the implementation of singly linked list. It's the basic linked list without
  * thread-safety.
  */
-public class MyLinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurrencyTesting<V> {
+public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListTesting<V> {
   /**
   * List node as an inner class for linked list.
   */
@@ -208,6 +209,35 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, LinkedListConcurren
     this.dummy.next = null;
     size = 0;
     return this;
+  }
+
+  @Override
+  public Iterator<V> iterator() {
+    return new MyLinkedListIterator<V>(this.dummy.next);
+  }
+
+  static class MyLinkedListIterator<V> implements Iterator<V> {
+    ListNode<V> curr;
+
+    public MyLinkedListIterator(ListNode<V> node) {
+      this.curr = node;
+    }
+    @Override
+    public boolean hasNext() {
+      return curr != null;
+    }
+
+    @Override
+    public V next() {
+      V v = curr.v;
+      curr = curr.next;
+      return v;
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
   }
 
   /**

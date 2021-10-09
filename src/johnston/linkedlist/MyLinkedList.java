@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Interface for singly linked list.
  */
-public interface MyLinkedList<V> {
+public interface MyLinkedList<V> extends Iterable<V> {
   public int size();
   public boolean isEmpty();
 

@@ -1,6 +1,7 @@
 package johnston.linkedlist;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.concurrent.locks.Lock;
@@ -20,7 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * specific, meaning it would override almost all methods.
  */
 public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
-    LinkedListConcurrencyTesting<V> {
+    MyLinkedListTesting<V> {
   /**
    * List node as an inner class for linked list.
    */
@@ -255,7 +256,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public List<V> getAll() {
-    List<V> result = new ArrayList<>(); // No need to lock thest two lines.
+    List<V> result = new ArrayList<>(); // No need to lock these two lines.
     ListNode curr;
     readLock.lock();
 
@@ -319,6 +320,71 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       return this;
     } finally {
       writeLock.unlock();
+    }
+  }
+
+  /**
+   * Return an iterator of linked list object. The readlock and writelock needs to
+   * pass to the iterator class since it's a static inner class.
+   * <p>
+   * Read lock required.
+   */
+  @Override
+  public Iterator<V> iterator() {
+    readLock.lock();
+    try {
+      return new MyLinkedListIterator<V>(this.dummy.next, readLock, writeLock);
+    } finally {
+      readLock.unlock();
+    }
+  }
+
+  class MyLinkedListIterator<V> implements Iterator<V> {
+    ListNode<V> curr;
+    Lock readLock;
+    Lock writeLock;
+
+    public MyLinkedListIterator(ListNode<V> node, Lock readLock, Lock writeLock) {
+      this.curr = node;
+      this.readLock = readLock;
+      this.writeLock = writeLock;
+    }
+
+    /**
+     * Return if next element is available.
+     * <p>
+     * Read lock required.
+     */
+    @Override
+    public boolean hasNext() {
+      readLock.lock();
+      try {
+        return curr != null;
+      } finally {
+        readLock.unlock();
+      }
+    }
+
+    /**
+     * Return next element if is available.
+     * <p>
+     * Read lock required.
+     */
+    @Override
+    public V next() {
+      readLock.lock();
+      try {
+        V v = curr.v;
+        curr = curr.next;
+        return v;
+      } finally {
+        readLock.unlock();
+      }
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException();
     }
   }
 

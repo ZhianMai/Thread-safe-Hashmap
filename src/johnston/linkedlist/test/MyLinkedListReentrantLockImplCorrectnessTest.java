@@ -6,15 +6,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Same content as MyLinkedListImplTest, just init() new a different class.
  */
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MySafeLinkedListCorrectnessTest {
+public class MyLinkedListReentrantLockImplCorrectnessTest {
   private MyLinkedList<String> stringList;
 
   @BeforeEach
@@ -250,6 +250,41 @@ public class MySafeLinkedListCorrectnessTest {
         strB.equals(stringList.get(strB)) &&
         strC.equals(stringList.get(strC)) &&
         stringList.get("Bad string") == null);
+  }
+
+  @Test
+  @DisplayName("Test iterator")
+  public void testIterator() {
+    reset();
+    int testTime = 100;
+    List<String> input = buildStringInput("Test ", testTime);
+    Set<String> set = new HashSet<>(input);
+
+    for (String str : input) {
+      stringList.addFirst(str);
+    }
+
+    for (String str : stringList) {
+      assertTrue(set.contains(str));
+    }
+
+    reset();
+    for (String str : input) {
+      stringList.addLast(str);
+    }
+
+    int i = 0;
+    for (String str: stringList) {
+      assertEquals(input.get(i++), str);
+    }
+
+    Iterator<String> iterator = stringList.iterator();
+    for (i = 0; i < testTime; i++) {
+      assertTrue(iterator.hasNext());
+      assertEquals(iterator.next(), input.get(i));
+    }
+
+    assertTrue(!iterator.hasNext());
   }
 
   private void reset() {

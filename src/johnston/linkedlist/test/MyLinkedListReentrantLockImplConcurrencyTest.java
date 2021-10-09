@@ -5,13 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * MySafeLinkedList is modified based on MyLinkedList. This test class is focus on concurrency
  * test. Using integer as the assigned type.
  */
-public class MySafeLinkedListConcurrencyTest {
+public class MyLinkedListReentrantLockImplConcurrencyTest {
    private MyLinkedListReentrantLockImpl<Integer> intList;
 
    // Use basic types To test multi-threading test cases correctness.
@@ -174,6 +175,43 @@ public class MySafeLinkedListConcurrencyTest {
     } catch (InterruptedException e) {
     }
     assertTrue(!diff);
+  }
+
+  @Test
+  @DisplayName("Test iterator data racing")
+  public void testIteratorDataRace() {
+    reset();
+    int testTime = 10000;
+    for (int i = 0; i < testTime; i++) {
+      intList.addFirst(i);
+    }
+
+    Thread readThread = new Thread() {
+      public void run() {
+        int i = 0;
+        for (int num : intList) {
+          i++;
+        }
+        assertEquals(i, testTime);
+      }
+    };
+
+    Thread writeThread = new Thread() {
+      public void run() {
+        for (int i = 0; i < 1000; i++) {
+          intList.addLast(i);
+        }
+      }
+    };
+
+    readThread.start();
+    writeThread.start();
+    try {
+      readThread.join();
+      writeThread.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   private void reset() {
