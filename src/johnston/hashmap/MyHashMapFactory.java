@@ -42,8 +42,8 @@ public class MyHashMapFactory {
                                                       float loadFactor) {
     switch (policy) {
       case NoSync:
-        return hasParam ? new MyHashMapImpl(capacity, loadFactor) :
-            new MyHashMapImpl();
+        return hasParam ? new MyHashMapBasicImpl(capacity, loadFactor) :
+            new MyHashMapBasicImpl();
       case SyncKeyword:
         return hasParam ? new MyHashMapSyncedImpl(capacity, loadFactor) :
             new MyHashMapSyncedImpl();

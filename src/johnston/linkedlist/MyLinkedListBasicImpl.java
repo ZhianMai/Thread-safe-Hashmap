@@ -8,7 +8,7 @@ import java.util.List;
  * This is the implementation of singly linked list. It's the basic linked list without
  * thread-safety.
  */
-public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListTesting<V> {
+public class MyLinkedListBasicImpl<V> implements MyLinkedList<V>, MyLinkedListTesting<V> {
   /**
   * List node as an inner class for linked list.
   */
@@ -30,11 +30,11 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListTesting
   private ListNode<V> dummy;
   private ListNode<V> end; // End of linked list
 
-  public MyLinkedListImpl() {
+  public MyLinkedListBasicImpl() {
     this(null);
   }
 
-  public MyLinkedListImpl(V v) {
+  public MyLinkedListBasicImpl(V v) {
     this.dummy = new ListNode<>(null);
     this.size = 0;
 

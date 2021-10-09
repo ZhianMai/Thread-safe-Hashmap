@@ -1,6 +1,6 @@
 package johnston.hashmap;
 
-import johnston.linkedlist.MyLinkedListImpl;
+import johnston.linkedlist.MyLinkedListBasicImpl;
 import johnston.linkedlist.MyLinkedList;
 
 import java.util.Arrays;
@@ -258,7 +258,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
 
   @Override
   public Iterator<MapPair> iterator() {
-    return new MyHashMapImpl.MyHashMapIterator<>(this.bucketList);
+    return new MyHashMapBasicImpl.MyHashMapIterator<>(this.bucketList);
   }
 
   /**
@@ -317,7 +317,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
    * Place different linked list implementations here
    */
   private MyLinkedList<MapPair> getNewLinkedList() {
-    return new MyLinkedListImpl<>();
+    return new MyLinkedListBasicImpl<>();
     // return new MyLinkedListThreadSafeImpl<>();
   }
 

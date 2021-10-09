@@ -1,7 +1,7 @@
 package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.MyLinkedListImpl;
+import johnston.linkedlist.MyLinkedListBasicImpl;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -162,7 +162,7 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
         int bucketIdx = getIndex((K) pair.key);
 
         if (bucketList[bucketIdx] == null) {
-          bucketList[bucketIdx] = new MyLinkedListImpl<>();
+          bucketList[bucketIdx] = new MyLinkedListBasicImpl<>();
           // Using thread-safe linked list would not prevent data racing.
           bucketList[bucketIdx] = getNewLinkedList();
         }
@@ -173,7 +173,7 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
 
   @Override
   public Iterator<MapPair> iterator() {
-    return new MyHashMapImpl.MyHashMapIterator<>(this.bucketList);
+    return new MyHashMapBasicImpl.MyHashMapIterator<>(this.bucketList);
   }
 
   /**
@@ -232,7 +232,7 @@ public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
    * Place different linked list implementations here
    */
   private MyLinkedList<MapPair> getNewLinkedList() {
-    return new MyLinkedListImpl<>();
+    return new MyLinkedListBasicImpl<>();
     // return new MyLinkedListThreadSafeImpl<>();
   }
 

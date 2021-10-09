@@ -1,7 +1,7 @@
 package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
-import johnston.linkedlist.MyLinkedListImpl;
+import johnston.linkedlist.MyLinkedListBasicImpl;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * The bucket uses the basic (not thread-safe) singly linked list.
  */
-public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
+public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;
@@ -23,14 +23,14 @@ public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
   private static final float DEFAULT_LOAD_FACTOR = 0.5f;
   private static final int THREAD_SLEEP_MILLI_SEC = 20;
 
-  public MyHashMapImpl(int capacity, float loadFactor) {
+  public MyHashMapBasicImpl(int capacity, float loadFactor) {
     this.capacity = capacity;
     this.size = 0;
     this.loadFactor = loadFactor;
     this.bucketList = (MyLinkedList<MapPair>[]) (new MyLinkedList[capacity]);
   }
 
-  public MyHashMapImpl() {
+  public MyHashMapBasicImpl() {
     this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
   }
 
@@ -228,7 +228,7 @@ public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
    * Place different linked list implementations here.
    */
   private MyLinkedList<MapPair> getNewLinkedList() {
-    return new MyLinkedListImpl<>();
+    return new MyLinkedListBasicImpl<>();
     // return new MyLinkedListThreadSafeImpl<>();
   }
 
