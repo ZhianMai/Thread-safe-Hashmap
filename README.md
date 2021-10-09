@@ -17,7 +17,7 @@ Implementations include: generic, Iterable<>, factory pattern with enum, Reentra
    - Notice that their iterators are not thread-safe, and in general, iterators should not be thread-safe.
    - If the iterator caller does not finish iterating, then the write thread is starvation since iterator holds the read lock.
    - The hash map iterator is to traverse each bucket's linked list one by one and call each one's iterator.
-   - The <i>remove()</i> method in iterable interface is not implemented due to thread-safety concern. Calling it would throw <i>UnsupportedOperationException</i>, and this <i>remove()</i> method is final: not allow to override in subclasses.
+   - The <i>remove()</i> method in Iterable interface is not implemented due to thread-safety concern. Calling it would throw <i>UnsupportedOperationException</i>, and it's final: not allow to override in subclasses.
  
 - Iteration Example:
  ```Java
