@@ -177,6 +177,7 @@ The multi-threading test cases contain write, read-write, write-delete tests, an
 
 ## Notes on implementations
 - The <i>MapPair</i> class overrides equals(Object o) method to make sure that equality condition is keyA.equals(keyB). And this method is final: not allow to overide.
+- The <i>MapPair</i> calss also need to override hashCode() since the equals() is overridden, in order to maintain consistent hashing equality.
 - For thread-safey reason, the remove() methods in their iterators are both not implemented. Calling it would throw <i>UnsupportedOperationException</i>, and it's final method: not allow to override.
    
 ## Notes on multi-threading
