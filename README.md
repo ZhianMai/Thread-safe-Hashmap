@@ -20,6 +20,7 @@ Implementations include: generic, Iterable<>, factory pattern with enum, Reentra
  
 - Example:
  ```Java
+ // Example of creating hash map object using factory class.
  private MyLinkedList<String> stringList = new MyLinkedListReentrantLockImpl<>();
  
 // Input something
