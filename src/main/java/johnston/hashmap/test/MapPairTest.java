@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MapPairTest {
@@ -19,7 +22,7 @@ public class MapPairTest {
 
   @Test
   @DisplayName("Test Junit functionality.")
-  public void checkJunit() {
+  public void junitSanityCheck() {
     assertTrue(true);
     assertTrue((pairOne != null) && (pairTwo != null), "Test object init.");
   }
@@ -41,5 +44,15 @@ public class MapPairTest {
 
     assertTrue(!copyOne.equals(badOne));
     assertTrue(!copyOne.equals(badTwo));
+  }
+
+  @Test
+  @DisplayName("Test MapPair hashing equality.")
+  public void testHashingEquality() {
+    MapPair<String, Integer> copyOne = new MapPair<>(new String(pairOne.key), 2);
+    Set<MapPair> set = new HashSet<>();
+    set.add(copyOne);
+    assertTrue(set.contains(pairOne));
+    assertTrue(set.contains(copyOne));
   }
 }

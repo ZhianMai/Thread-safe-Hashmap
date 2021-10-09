@@ -23,7 +23,7 @@ public class MyLinkedListImplCorrectnessTest {
 
   @Test
   @DisplayName("Test Junit functionality.")
-  public void demoTestMethod() {
+  public void junitSanityCheck() {
     assertTrue(true);
     assertTrue((stringList != null) && (intList != null), "Test object init.");
   }

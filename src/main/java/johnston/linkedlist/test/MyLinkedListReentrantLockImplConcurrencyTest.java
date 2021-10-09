@@ -33,7 +33,7 @@ public class MyLinkedListReentrantLockImplConcurrencyTest {
 
   @Test
   @DisplayName("Test Junit functionality.")
-  public void demoTestMethod() {
+  public void junitSanityCheck() {
     assertTrue(true);
     assertTrue((intList != null), "Test object init.");
   }

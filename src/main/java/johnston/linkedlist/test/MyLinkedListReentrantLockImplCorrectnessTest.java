@@ -24,7 +24,7 @@ public class MyLinkedListReentrantLockImplCorrectnessTest {
 
   @Test
   @DisplayName("Test Junit functionality.")
-  public void demoTestMethod() {
+  public void junitSanityCheck() {
     assertTrue(true);
     assertTrue((stringList != null), "Test object init.");
   }

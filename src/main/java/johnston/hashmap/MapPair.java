@@ -35,4 +35,13 @@ public class MapPair<K, V> {
 
     return ((MapPair<K, V>) o).key.equals(this.key);
   }
+
+  /**
+   * The equals() method is overridden, so hashCode() needs to override to maintain
+   * equality consistence in hashing object of MapPair class.
+   */
+  @Override
+  public int hashCode() {
+    return key.hashCode();
+  }
 }

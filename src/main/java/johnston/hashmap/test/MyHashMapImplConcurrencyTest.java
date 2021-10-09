@@ -34,7 +34,7 @@ public class MyHashMapImplConcurrencyTest {
 
   @Test
   @DisplayName("Test Junit functionality.")
-  public void demoTestMethod() {
+  public void junitSanityCheck() {
     assertTrue(true);
     assertTrue((hashMap != null), "Test object init.");
   }
