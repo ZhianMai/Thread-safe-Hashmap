@@ -42,7 +42,7 @@ public class MyHashMapImplCorrectnessTest {
 
     assertEquals(globalTestTime, hashMap.getTotalPairCount());
     assertEquals(globalTestTime, hashMap.size());
-    //printALlBucketSize();
+    // printALlBucketSize();
     reset();
     assertEquals(0, hashMap.size());
     assertEquals(0, hashMap.getTotalPairCount());
@@ -188,7 +188,7 @@ public class MyHashMapImplCorrectnessTest {
     int max = 100;
 
     for (int i = 0; i < count; i++) {
-      result.add(prefix + i + " " + rand.nextInt(max));
+      result.add(prefix + i);
     }
     return result;
   }

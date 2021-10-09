@@ -2,17 +2,20 @@ package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
 import johnston.linkedlist.MyLinkedListBasicImpl;
+import org.apache.commons.codec.digest.MurmurHash3;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * This is the basic hash map implementation without thread safety.
+ * This is the thread-safety hash map implementation based on the basic hash map implementation.
  *
- * The bucket uses the basic (not thread-safe) singly linked list.
+ * This class uses synchronized keyword to ensure thread-safety instead of read-write lock.
+ * It's designed for performance testing.
  */
-public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
+public class MyHashMapSyncedImpl<K, V> implements MyHashMapTesting<K, V> {
   private int size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;
@@ -23,25 +26,25 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
   private static final float DEFAULT_LOAD_FACTOR = 0.5f;
   private static final int THREAD_SLEEP_MILLI_SEC = 20;
 
-  public MyHashMapBasicImpl(int capacity, float loadFactor) {
+  public MyHashMapSyncedImpl(int capacity, float loadFactor) {
     this.capacity = capacity;
     this.size = 0;
     this.loadFactor = loadFactor;
     this.bucketList = (MyLinkedList<MapPair>[]) (new MyLinkedList[capacity]);
   }
 
-  public MyHashMapBasicImpl() {
+  public MyHashMapSyncedImpl() {
     this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
   }
 
   @Override
-  public int size() {
+  public synchronized int size() {
     return this.size;
   }
 
   @Override
   public boolean isEmpty() {
-    return this.size == 0;
+    return this.size() == 0;
   }
 
   @Override
@@ -53,7 +56,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
    * Return the value by given key. If no such key, return null.
    */
   @Override
-  public V get(K k) {
+  public synchronized V get(K k) {
     int bucketIdx = getIndex(k);
     if (bucketList[bucketIdx] == null) {
       return null;
@@ -80,7 +83,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
    * If the key exists, update the value, otherwise insert a new pair.
    */
   @Override
-  public void put(K k, V v) {
+  public synchronized void put(K k, V v) {
     rehash();
     int bucketIdx = getIndex(k);
     MapPair<K, V> newPair = new MapPair<>(k, v);
@@ -102,7 +105,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
   }
 
   @Override
-  public void removeAll() {
+  public synchronized void removeAll() {
     size = 0;
     Arrays.fill(bucketList, null);
   }
@@ -111,7 +114,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
    * Remove the pair by the given key and return true. If no such keys, return false.
    */
   @Override
-  public boolean remove(K k) {
+  public synchronized boolean remove(K k) {
     int bucketIdx = getIndex(k);
     if (bucketList[bucketIdx] == null) {
       return false;
@@ -126,11 +129,16 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
     }
   }
 
+  /**
+   * Return hashcode of the given key. Using MurmurHash function here to avoid
+   * primary clustering. MurmurHash is a performance efficient non-cryptographic hash function.
+   */
   private int hash(K k) {
     if (k == null) {
       return 0;
     }
-    return k.hashCode() & 0x7FFFFFFF; // Ensure > 0
+    byte[] temp = BigInteger.valueOf(k.hashCode()).toByteArray();
+    return MurmurHash3.hash32(temp) & 0x7FFFFFFF; // Ensure > 0
   }
 
   private int getIndex(K k) {
@@ -143,7 +151,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
    * to be found by given keys after rehashing.
    */
   private void rehash() {
-    if (this.size * 1.0f / this.capacity < this.loadFactor) {
+    if (this.size * 1.0f / this.capacity < loadFactor) {
       return;
     }
 
@@ -161,6 +169,8 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
         int bucketIdx = getIndex((K) pair.key);
 
         if (bucketList[bucketIdx] == null) {
+          bucketList[bucketIdx] = new MyLinkedListBasicImpl<>();
+          // Using thread-safe linked list would not prevent data racing.
           bucketList[bucketIdx] = getNewLinkedList();
         }
         bucketList[bucketIdx].addFirst(pair);
@@ -170,11 +180,12 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
 
   @Override
   public Iterator<MapPair> iterator() {
-    return new MyHashMapIterator<>(this.bucketList);
+    return new MyHashMapBasicImpl.MyHashMapIterator<>(this.bucketList);
   }
 
   /**
-   * Iterator class for hash map.
+   * Iterator class for hash map. It should not guaranteed thread-safety. If the iterator
+   * caller does not finish iteration soon, then it will cause write thread starvation.
    */
   static class MyHashMapIterator<MapPair> implements Iterator<MapPair> {
     MyLinkedList<MapPair>[] bucketList;
@@ -225,7 +236,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
   }
 
   /**
-   * Place different linked list implementations here.
+   * Place different linked list implementations here
    */
   private MyLinkedList<MapPair> getNewLinkedList() {
     return new MyLinkedListBasicImpl<>();
@@ -236,7 +247,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
    * Methods below are for testing.
    */
   @Override
-  public int[] getAllBucketSize() {
+  public synchronized int[] getAllBucketSize() {
     int[] result = new int[bucketList.length];
 
     for (int i = 0; i < result.length; i++) {
@@ -248,7 +259,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
   }
 
   @Override
-  public int getTotalPairCount() {
+  public synchronized int getTotalPairCount() {
     int result = 0;
 
     for (int i = 0; i < bucketList.length; i++) {
@@ -260,7 +271,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
   }
 
   @Override
-  public void addAndDelete(K k, V v) {
+  public synchronized void addAndDelete(K k, V v) {
     put(k, v);
     remove(k);
   }
@@ -269,7 +280,7 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
    *  Simulates heavy time-consuming read data work.
    */
   @Override
-  public void heavyRead() throws InterruptedException {
-    Thread.sleep(THREAD_SLEEP_MILLI_SEC);
+  public  synchronized void heavyRead() throws InterruptedException {
+    Thread.sleep(20);
   }
 }

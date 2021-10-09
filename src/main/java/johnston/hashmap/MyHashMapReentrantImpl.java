@@ -2,7 +2,9 @@ package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedListBasicImpl;
 import johnston.linkedlist.MyLinkedList;
+import org.apache.commons.codec.digest.MurmurHash3;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -206,14 +208,16 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   }
 
   /**
-   * Return the hash value of the given key. Use the key's hashcode() and make it
-   * positive. No need to lock.
+   * Return hashcode of the given key. Using MurmurHash function here to avoid
+   * primary clustering. MurmurHash is a performance efficient non-cryptographic hash function.
+   * No need to lock.
    */
   private int hash(K k) {
     if (k == null) {
       return 0;
     }
-    return k.hashCode() & 0x7FFFFFFF; // Ensure > 0
+    byte[] temp = BigInteger.valueOf(k.hashCode()).toByteArray();
+    return MurmurHash3.hash32(temp) & 0x7FFFFFFF; // Ensure > 0
   }
 
   /**
