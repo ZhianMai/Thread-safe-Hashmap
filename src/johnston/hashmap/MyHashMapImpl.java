@@ -2,9 +2,9 @@ package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedList;
 import johnston.linkedlist.MyLinkedListImpl;
-import johnston.linkedlist.MyLinkedListReentrantLockImpl;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -143,7 +143,7 @@ public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
    * to be found by given keys after rehashing.
    */
   private void rehash() {
-    if (this.size * 1.0f / this.capacity < loadFactor) {
+    if (this.size * 1.0f / this.capacity < this.loadFactor) {
       return;
     }
 
@@ -168,6 +168,62 @@ public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
     }
   }
 
+  @Override
+  public Iterator<MapPair> iterator() {
+    return new MyHashMapIterator<>(this.bucketList);
+  }
+
+  /**
+   * Iterator class for hash map.
+   */
+  static class MyHashMapIterator<MapPair> implements Iterator<MapPair> {
+    MyLinkedList<MapPair>[] bucketList;
+    int bucketIndex;
+    Iterator<MapPair> listIterator;
+
+    public MyHashMapIterator(MyLinkedList<MapPair>[] bucketList) {
+      this.bucketList = bucketList;
+      if (bucketList == null || bucketList.length == 0) {
+        bucketIndex = -1;
+      } else {
+        bucketIndex = 0;
+      }
+      listIterator = null;
+    }
+
+    @Override
+    public boolean hasNext() {
+      updateIterator();
+      return listIterator == null ? false : listIterator.hasNext();
+    }
+
+    @Override
+    public MapPair next() {
+      updateIterator();
+      return listIterator.next();
+    }
+
+    private void updateIterator() {
+      if (bucketIndex == -1) { // No elements
+        listIterator = null;
+        return;
+      } else if (bucketIndex == bucketList.length) { // The last bucket, no more update.
+        return;
+      } else if (listIterator != null && listIterator.hasNext()) { // Current iterator not end
+        return;
+      }
+      for (; bucketIndex < bucketList.length; bucketIndex++) { // Get the next bucket iterator
+        if (bucketList[bucketIndex] != null) {
+          listIterator = bucketList[bucketIndex].iterator();
+          if (listIterator.hasNext()) {
+            bucketIndex++;
+            return;
+          }
+        }
+      }
+    }
+  }
+
   /**
    * Place different linked list implementations here.
    */
@@ -176,6 +232,9 @@ public class MyHashMapImpl<K, V> implements MyHashMapTesting<K, V> {
     // return new MyLinkedListThreadSafeImpl<>();
   }
 
+  /**
+   * Methods below are for testing.
+   */
   @Override
   public int[] getAllBucketSize() {
     int[] result = new int[bucketList.length];

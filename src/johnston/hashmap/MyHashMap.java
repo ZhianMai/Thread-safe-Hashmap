@@ -1,6 +1,6 @@
 package johnston.hashmap;
 
-public interface MyHashMap<K, V> {
+public interface MyHashMap<K, V> extends Iterable<MapPair> {
   public int size();
   public boolean isEmpty();
   public boolean isSameHash(K one, K two);

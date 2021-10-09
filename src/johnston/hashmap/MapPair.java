@@ -20,6 +20,8 @@ public class MapPair<K, V> {
   /**
    * Guarantee that given a key, the hash map would return the corresponding key-val pair
    * iff two keys are equals.
+   *
+   * Overriding is not allowed.
    */
   @Override
   public final boolean equals(Object o) {

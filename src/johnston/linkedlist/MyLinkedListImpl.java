@@ -234,8 +234,11 @@ public class MyLinkedListImpl<V> implements MyLinkedList<V>, MyLinkedListTesting
       return v;
     }
 
+    /**
+     * Overriding is not allowed.
+     */
     @Override
-    public void remove() {
+    public final void remove() {
       throw new UnsupportedOperationException();
     }
   }

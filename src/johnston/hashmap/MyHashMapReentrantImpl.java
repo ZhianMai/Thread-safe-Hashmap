@@ -4,6 +4,7 @@ import johnston.linkedlist.MyLinkedListImpl;
 import johnston.linkedlist.MyLinkedList;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -251,6 +252,63 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
           bucketList[bucketIdx] = getNewLinkedList();
         }
         bucketList[bucketIdx].addFirst(pair);
+      }
+    }
+  }
+
+  @Override
+  public Iterator<MapPair> iterator() {
+    return new MyHashMapImpl.MyHashMapIterator<>(this.bucketList);
+  }
+
+  /**
+   * Iterator class for hash map. It should not guaranteed thread-safety. If the iterator
+   * caller does not finish iteration soon, then it will cause write thread starvation.
+   */
+  static class MyHashMapIterator<MapPair> implements Iterator<MapPair> {
+    MyLinkedList<MapPair>[] bucketList;
+    int bucketIndex;
+    Iterator<MapPair> listIterator;
+
+    public MyHashMapIterator(MyLinkedList<MapPair>[] bucketList) {
+      this.bucketList = bucketList;
+      if (bucketList == null || bucketList.length == 0) {
+        bucketIndex = -1;
+      } else {
+        bucketIndex = 0;
+      }
+      listIterator = null;
+    }
+
+    @Override
+    public boolean hasNext() {
+      updateIterator();
+      return listIterator == null ? false : listIterator.hasNext();
+    }
+
+    @Override
+    public MapPair next() {
+      updateIterator();
+      return listIterator.next();
+    }
+
+    private void updateIterator() {
+      if (bucketIndex == -1) { // No elements
+        listIterator = null;
+        return;
+      } else if (bucketIndex == bucketList.length) { // The last bucket, no more update.
+        return;
+      } else if (listIterator != null && listIterator.hasNext()) { // Current iterator not end
+        return;
+      }
+      for (; bucketIndex < bucketList.length; bucketIndex++) { // Get the next bucket iterator
+        if (bucketList[bucketIndex] != null) {
+          listIterator = bucketList[bucketIndex].iterator();
+          if (listIterator.hasNext()) {
+            bucketIndex++;
+            return;
+          }
+        }
       }
     }
   }

@@ -1,5 +1,6 @@
 package johnston.hashmap.test;
 
+import johnston.hashmap.MapPair;
 import johnston.hashmap.MyHashMapFactory;
 import johnston.hashmap.MyHashMapTesting;
 import johnston.hashmap.ThreadSafePolicy;
@@ -7,9 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,7 +21,7 @@ public class MyHashMapImplCorrectnessTest {
   public void init() {
     // Use factory to create an object for testing.
     // Select NoSync, SyncKeyword, or ReadWriteLock.
-    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.NoSync);
+    hashMap = MyHashMapFactory.newMyHashMapTesting(ThreadSafePolicy.ReadWriteLock);
     globalTestTime = 100;
   }
 
@@ -136,6 +135,34 @@ public class MyHashMapImplCorrectnessTest {
     }
   }
 
+  @Test
+  @DisplayName("Test hash map iterator")
+  public void testHashMapIterator() {
+    reset();
+    List<String> keys = buildStringInput("Pair ", 100);
+    writeSameValue(keys, 1);
+    Set<String> keySet = new HashSet<>(keys);
+    int count = 0;
+    // printALlBucketSize();
+
+    for (MapPair<String, Integer> mapPair : hashMap) {
+      assertTrue(keySet.contains(mapPair.key));
+      keySet.remove(mapPair.key);
+    }
+
+    Iterator<MapPair> iterator = hashMap.iterator();
+    keySet = new HashSet<>(keys);
+    MapPair<String, Integer> mapPair;
+    while (iterator.hasNext()) {
+      mapPair = iterator.next();
+      count++;
+      assertTrue(keySet.contains(mapPair.key));
+      assertEquals(mapPair.getV(), 1);
+      keySet.remove(mapPair.key);
+    }
+    assertEquals(count, 100);
+  }
+
   private void reset() {
     hashMap.removeAll();
   }
@@ -152,6 +179,7 @@ public class MyHashMapImplCorrectnessTest {
         System.out.println();
       }
     }
+    System.out.println();
   }
 
   private List<String> buildStringInput(String prefix, int count) {

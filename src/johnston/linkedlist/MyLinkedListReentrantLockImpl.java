@@ -339,6 +339,13 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     }
   }
 
+  /**
+   * Iterator of MyLinkedListReentrantLockImpl.
+   *
+   * Iterator should not be thread-safe, because iterator cannot decide when to finish
+   * iterating. If the caller holds it for a long time, then starvation on write thread
+   * occurs.
+   */
   class MyLinkedListIterator<V> implements Iterator<V> {
     ListNode<V> curr;
     Lock readLock;
@@ -352,38 +359,27 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
 
     /**
      * Return if next element is available.
-     * <p>
-     * Read lock required.
      */
     @Override
     public boolean hasNext() {
-      readLock.lock();
-      try {
-        return curr != null;
-      } finally {
-        readLock.unlock();
-      }
+      return curr != null;
     }
 
     /**
      * Return next element if is available.
-     * <p>
-     * Read lock required.
      */
     @Override
     public V next() {
-      readLock.lock();
-      try {
-        V v = curr.v;
-        curr = curr.next;
-        return v;
-      } finally {
-        readLock.unlock();
-      }
+      V v = curr.v;
+      curr = curr.next;
+      return v;
     }
 
+    /**
+     * Overriding is not allowed.
+     */
     @Override
-    public void remove() {
+    public final void remove() {
       throw new UnsupportedOperationException();
     }
   }
