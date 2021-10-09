@@ -178,7 +178,7 @@ The multi-threading test cases contain write, read-write, write-delete tests, an
 
 ## Notes on implementations
 - Locking critical sections has high performance oveerhead, so critical sections should be as small as possible. I left all variable declarations outside the lock.
-- Try to avoid unnecessary lock. For example, if method <i>int size()</i> is in critical section, and method <i>boolean isEmpty()</i> just return <i>size() == 0</i>, then <i>boolean isEmpty()</i> does not need to lock since all its work is done ine critical sections.
+- Try to avoid unnecessary lock. For example, if method <i>int size()</i> is in critical section, and method <i>boolean isEmpty()</i> just return <i>size() == 0</i>, then <i>boolean isEmpty()</i> does not need to lock since all its work is done in the critical sections.
 - The <i>MapPair</i> class overrides equals(Object o) method to make sure that equality condition is keyA.equals(keyB). And this method is final: not allow to overide.
 - The <i>MapPair</i> calss also need to override hashCode() since the equals() is overridden, in order to maintain consistent hashing equality.
 - For thread-safey reason, the remove() methods in their iterators are both not implemented. Calling it would throw <i>UnsupportedOperationException</i>, and it's final method: not allow to override.
