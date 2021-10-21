@@ -1,4 +1,4 @@
-package johnston.factory_demo;
+package johnston.demo.factory_pattern;
 
 public class DevHashMapImplTestA implements DevHashMapTest {
 
