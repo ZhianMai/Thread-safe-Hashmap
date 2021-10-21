@@ -63,7 +63,7 @@ while (iterator.hasNext()) {
 
 
 ### Version 1.2
-- Improved the multi-threading read method to show that on heavy reading situations, the read-write lock does have significantly better performance than synchronized keyword.
+- Improved the multi-threading read method testing to show that on heavy reading situations, the read-write lock does have significantly better performance than synchronized keyword.
   - The old method was to run <i>hashMap.contains(key)</i> a lot of times, and perhaps the bottleneck is the memory R/W speed that slows down the read-write lock hash map, making it has the same runtime as the synchronized keyword hash map.
   - The new heavy read method simply makes the current thread sleep 20 milli seconds, so no more memory R/W speed bottleneck.
   - The multi-threading heavy read test starts 6 threads, and the result is:
