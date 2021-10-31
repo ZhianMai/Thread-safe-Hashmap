@@ -1,6 +1,7 @@
 package johnston.hashmap.test;
 
 import johnston.hashmap.MapPair;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -11,11 +12,11 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MapPairTest {
-  private MapPair<String, Integer> pairOne;
-  private MapPair<String, Integer> pairTwo;
+  private static MapPair<String, Integer> pairOne;
+  private static MapPair<String, Integer> pairTwo;
 
-  @BeforeEach
-  public void init() {
+  @BeforeAll
+  public static void init() {
     pairOne = new MapPair<>("pair A", 0);
     pairTwo = new MapPair<>("pair B", 1);
   }

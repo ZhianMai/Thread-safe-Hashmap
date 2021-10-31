@@ -243,6 +243,21 @@ public class MyLinkedListBasicImpl<V> implements MyLinkedList<V>, MyLinkedListTe
     }
   }
 
+  @Override
+  public String toString() {
+    StringBuilder result = new StringBuilder();
+    result.append("MyLinkedListBasicImpl{");
+
+    for (V v : this) {
+      result.append(v);
+      result.append(",");
+    }
+
+    result.append("}");
+
+    return result.toString();
+  }
+
   /**
    * For multi-threading test only.
    */

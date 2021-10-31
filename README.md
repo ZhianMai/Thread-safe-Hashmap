@@ -1,10 +1,13 @@
 # Thread-safe Linked List and Hash Map (in Java)
 
-This repo contains implementations of thread-safe linked list, hash map and their JUnit tests.
+This repo contains implementations of thread-safe linked list, hash map, and their JUnit tests.
 
 Implementations include: generic, Iterable<>, factory pattern with enum, ReentrantReadWriteLock, multi-threading testing, rules from <i>Effective Java</i>, and more on the way...
 
 ## Update
+
+### Version 1.5
+Forgot to implement toString() after implementing the iterator. How could this happen!?
 
 ### Version 1.4
 - The project already added Maven support for future extension.
@@ -65,7 +68,7 @@ while (iterator.hasNext()) {
 ### Version 1.2
 - Improved the multi-threading read method testing to show that on heavy reading situations, the read-write lock does have significantly better performance than synchronized keyword.
   - The old method was to run <i>hashMap.contains(key)</i> a lot of times, and perhaps the bottleneck is the memory R/W speed that slows down the read-write lock hash map, making it has the same runtime as the synchronized keyword hash map.
-  - The new heavy read method simply makes the current thread sleep 20 milli seconds, so no more memory R/W speed bottleneck.
+  - The new heavy read method simply makes the current thread sleep 20 milliseconds, so no more memory R/W speed bottleneck.
   - The multi-threading heavy read test starts 6 threads, and the result is:
     - Basic benchmark (no thread-safety): 30 sec;
     - Synchronized keyword: 3 min;
@@ -108,7 +111,7 @@ while (iterator.hasNext()) {
  // Same usage as the MyHashMap above, but with different method names.
  ```
  
- - Applied factory method to Junit testing to reduce redundent codes.
+ - Applied factory method to Junit testing to reduce redundant codes.
  
  <p align="center">
   <img src="/cover%20img/57ecc01c4c5cd160aa630b58238a86b.jpg" style="width:300px;height:400px;"/>
@@ -181,15 +184,15 @@ The multi-threading test cases contain write, read-write, write-delete tests, an
 
 ## Notes on implementations
 - Development should aim for long-term maintenance instead of one-time pass, and should follow SOLID principles.
-- Locking critical sections has high performance oveerhead, so critical sections should be as small as possible. I left all variable declarations outside the lock.
+- Locking critical sections has high performance overhead, so critical sections should be as small as possible. I left all variable declarations outside the lock.
 - Try to avoid unnecessary lock. For example, if method <i>int size()</i> is in critical section, and method <i>boolean isEmpty()</i> just return <i>size() == 0</i>, then <i>boolean isEmpty()</i> does not need to lock since all its work is done in the critical sections.
-- The <i>MapPair</i> class overrides equals(Object o) method to make sure that equality condition is keyA.equals(keyB). And this method is final: not allow to overide.
+- The <i>MapPair</i> class overrides equals(Object o) method to make sure that equality condition is keyA.equals(keyB). This method is also final: not allow overriding.
 - The <i>MapPair</i> class also needs to override hashCode() since the equals() is overridden, in order to maintain consistent hashing equality.
-- For thread-safey reason, the remove() methods in their iterators are both not implemented. Calling it would throw <i>UnsupportedOperationException</i>, and they're final: not allow to override.
+- For thread-safey reason, the remove() methods in their iterators are both not implemented. Calling it would throw <i>UnsupportedOperationException</i>, and they're final: not allow overriding.
    
 ## Notes on multi-threading
 
-In general, the ReentrantReadWriteLock has better flexibility than synchronized keywords, such as avoiding starvation, supporting priority, and spearating read-write operation.
+In general, the ReentrantReadWriteLock has better flexibility than synchronized keywords, such as avoiding starvation, supporting priority, and separating read-write operation.
 
 But the performance test on a single machine shows that ReentrantReadWriteLock does not have significant speedup than synchronized keyword. Maybe the runtime overhead is higher than traditional synchronized keyword. I tried minimizing the critical sections for read-write look, but the performance has no significant improvement, and it's easier to cause errors than locking the whole method.
 

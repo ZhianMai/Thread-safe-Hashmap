@@ -384,6 +384,21 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     }
   }
 
+  @Override
+  public String toString() {
+    StringBuilder result = new StringBuilder();
+    result.append("MyLinkedListReentrantLockImpl{");
+
+    for (V v : this) {
+      result.append(v);
+      result.append(",");
+    }
+
+    result.append("}");
+
+    return result.toString();
+  }
+
   /**
    * For multi-threading test only.
    */

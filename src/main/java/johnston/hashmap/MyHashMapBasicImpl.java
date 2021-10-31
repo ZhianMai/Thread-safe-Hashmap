@@ -230,6 +230,21 @@ public class MyHashMapBasicImpl<K, V> implements MyHashMapTesting<K, V> {
     }
   }
 
+  @Override
+  public String toString() {
+    StringBuilder result = new StringBuilder();
+    result.append("\"MyHashMapBasicImpl{\"");
+
+    for (MapPair<K, V> pair : this) {
+      String temp = "key=" + pair.key + ", val=" + pair.getV() + "; ";
+      result.append(temp);
+    }
+
+    result.append("}");
+
+    return result.toString();
+  }
+
   /**
    * Place different linked list implementations here.
    */

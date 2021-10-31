@@ -44,4 +44,12 @@ public class MapPair<K, V> {
   public int hashCode() {
     return key.hashCode();
   }
+
+  @Override
+  public String toString() {
+    return "MapPair{" +
+        "key=" + key +
+        ", val=" + val +
+        '}';
+  }
 }

@@ -2,10 +2,11 @@ package johnston.demo.usage;
 
 import johnston.linkedlist.MyLinkedList;
 import johnston.linkedlist.MyLinkedListBasicImpl;
+import johnston.linkedlist.MyLinkedListReentrantLockImpl;
 
 public class MyLinkedListDemo {
   public static void main(String[] args) {
-    MyLinkedList<Integer> list = new MyLinkedListBasicImpl<>();
+    MyLinkedList<Integer> list = new MyLinkedListReentrantLockImpl<>();
 
     // Append to the tail
     for (int i = 0; i < 10; i++) {
@@ -35,6 +36,8 @@ public class MyLinkedListDemo {
     for (int i : list) {
       System.out.print(i + ",");
     }
+
+    System.out.println(list);
 
     // Remove element, O(n)
     int size = list.size();
