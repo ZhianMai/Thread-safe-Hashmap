@@ -35,9 +35,9 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   private static final float DEFAULT_LOAD_FACTOR = 0.5f;
   private static final int THREAD_SLEEP_MILLI_SEC = 20;
 
-  private ReadWriteLock readWriteLock;
-  private Lock readLock;
-  private Lock writeLock;
+  private final ReadWriteLock READ_WRITE_LOCK;
+  private final Lock READ_LOCK;
+  private final Lock WRITE_LOCK;
 
   public MyHashMapReentrantImpl(int capacity, float loadFactor) {
     this.capacity = capacity;
@@ -46,9 +46,9 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
     this.bucketList = (MyLinkedList<MapPair>[]) (new MyLinkedList[capacity]);
 
     // Init read-write lock.
-    readWriteLock = new ReentrantReadWriteLock();
-    readLock = readWriteLock.readLock();
-    writeLock = readWriteLock.writeLock();
+    READ_WRITE_LOCK = new ReentrantReadWriteLock();
+    READ_LOCK = READ_WRITE_LOCK.readLock();
+    WRITE_LOCK = READ_WRITE_LOCK.writeLock();
   }
 
   public MyHashMapReentrantImpl() {
@@ -62,12 +62,12 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
    */
   @Override
   public int size() {
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       return this.size;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -99,7 +99,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
     int bucketIdx;
     MapPair<K, V> dummy = new MapPair<>(k, null);
     int pairIdx;
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       bucketIdx = getIndex(k);
@@ -115,7 +115,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
       return (V) bucketList[bucketIdx].get(pairIdx).getV();
 
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -136,7 +136,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   public void put(K k, V v) {
     int bucketIdx;
     MapPair<K, V> newPair = new MapPair<>(k, v);
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       rehash();
@@ -158,7 +158,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
         oldPair.setV(v);
       }
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -169,13 +169,13 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
    */
   @Override
   public void removeAll() {
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       size = 0;
       Arrays.fill(bucketList, null);
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -188,7 +188,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   public boolean remove(K k) {
     int bucketIdx;
     MapPair<K, V> dummy = new MapPair<>(k, null);
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       bucketIdx = getIndex(k);
@@ -204,7 +204,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
         return false;
       }
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -373,13 +373,13 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
 
   @Override
   public void addAndDelete(K k, V v) {
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       put(k, v);
       remove(k);
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -388,12 +388,12 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
    */
   @Override
   public void heavyRead() throws InterruptedException {
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       Thread.sleep(THREAD_SLEEP_MILLI_SEC);
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 }

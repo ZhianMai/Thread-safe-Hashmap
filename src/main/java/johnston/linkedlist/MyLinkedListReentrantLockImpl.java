@@ -43,9 +43,9 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   private int size;
   private ListNode<V> dummy;
   private ListNode<V> end; // End of linked list
-  private ReadWriteLock readWriteLock;
-  private Lock readLock;
-  private Lock writeLock;
+  private final ReadWriteLock READ_WRITE_LOCK;
+  private final Lock READ_LOCK;
+  private final Lock WRITE_LOCK;
 
   public MyLinkedListReentrantLockImpl() {
     this(null);
@@ -61,9 +61,9 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     }
 
     // Init read-write lock.
-    readWriteLock = new ReentrantReadWriteLock();
-    readLock = readWriteLock.readLock();
-    writeLock = readWriteLock.writeLock();
+    READ_WRITE_LOCK = new ReentrantReadWriteLock();
+    READ_LOCK = READ_WRITE_LOCK.readLock();
+    WRITE_LOCK = READ_WRITE_LOCK.writeLock();
   }
 
   /**
@@ -71,11 +71,11 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public int size() {
-    readLock.lock();
+    READ_LOCK.lock();
     try {
       return this.size;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -94,7 +94,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public MyLinkedListReentrantLockImpl addLast(V v) {
-    writeLock.lock();
+    WRITE_LOCK.lock();
     try {
       updateEnd();
       this.end.next = new ListNode<>(v);
@@ -103,13 +103,13 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
 
       return this;
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
   @Override
   public MyLinkedList addFirst(V v) {
-    writeLock.lock();
+    WRITE_LOCK.lock();
     try {
       ListNode<V> newNode = new ListNode<>(v);
       newNode.next = dummy.next;
@@ -118,7 +118,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
 
       return this;
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -131,7 +131,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   public boolean contains(V v) {
     ListNode curr = this.dummy.next; // No need to lock this
 
-    readLock.lock();
+    READ_LOCK.lock();
     try {
       while (curr != null) {
         if (curr.v.equals(v)) {
@@ -141,7 +141,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       }
       return false;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -153,7 +153,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   @Override
   public V get(int index) {
     ListNode curr;
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       if (index >= this.size) {
@@ -166,7 +166,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       }
       return (V) curr.v;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -178,7 +178,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   @Override
   public V get(V v) {
     ListNode curr;
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       if (this.size == 0) {
@@ -191,7 +191,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       }
       return curr == null ? null : (V) curr.v;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -204,7 +204,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   public int getIndex(V v) {
     int index = 0;
     ListNode curr;
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       curr = this.dummy.next;
@@ -219,7 +219,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       }
       return index;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -231,7 +231,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   @Override
   public boolean set(V v, int index) {
     ListNode curr;
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       if (index >= this.size || index < 0) {
@@ -246,7 +246,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       curr.v = v;
       return true;
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -259,7 +259,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   public List<V> getAll() {
     List<V> result = new ArrayList<>(); // No need to lock these two lines.
     ListNode curr;
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       curr = this.dummy.next;
@@ -270,7 +270,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       }
       return result;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -282,7 +282,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   @Override
   public boolean remove(V v) {
     ListNode curr;
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       if (v == null || isEmpty()) {
@@ -302,7 +302,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       this.size--;
       return true;
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -313,14 +313,14 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public MyLinkedListReentrantLockImpl removeAll() {
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       this.dummy.next = null;
       size = 0;
       return this;
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
@@ -332,11 +332,11 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public Iterator<V> iterator() {
-    readLock.lock();
+    READ_LOCK.lock();
     try {
-      return new MyLinkedListIterator<V>(this.dummy.next, readLock, writeLock);
+      return new MyLinkedListIterator<V>(this.dummy.next, READ_LOCK, WRITE_LOCK);
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -407,7 +407,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   public int getNodeLength() {
     int count = 0;
     ListNode curr;
-    readLock.lock();
+    READ_LOCK.lock();
 
     try {
       curr = dummy;
@@ -418,7 +418,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       }
       return count;
     } finally {
-      readLock.unlock();
+      READ_LOCK.unlock();
     }
   }
 
@@ -427,7 +427,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public void addAndDelete(V v) {
-    writeLock.lock();
+    WRITE_LOCK.lock();
 
     try {
       addFirst(v);
@@ -436,7 +436,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       addLast(v);
       remove(v);
     } finally {
-      writeLock.unlock();
+      WRITE_LOCK.unlock();
     }
   }
 
