@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -42,7 +43,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   private int size;
   private ListNode<V> dummy;
   private ListNode<V> end; // End of linked list
-  private ReentrantReadWriteLock reentrantReadWriteLock;
+  private ReadWriteLock readWriteLock;
   private Lock readLock;
   private Lock writeLock;
 
@@ -60,9 +61,9 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     }
 
     // Init read-write lock.
-    reentrantReadWriteLock = new ReentrantReadWriteLock();
-    readLock = reentrantReadWriteLock.readLock();
-    writeLock = reentrantReadWriteLock.writeLock();
+    readWriteLock = new ReentrantReadWriteLock();
+    readLock = readWriteLock.readLock();
+    writeLock = readWriteLock.writeLock();
   }
 
   /**

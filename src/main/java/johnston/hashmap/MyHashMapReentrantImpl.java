@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -34,7 +35,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   private static final float DEFAULT_LOAD_FACTOR = 0.5f;
   private static final int THREAD_SLEEP_MILLI_SEC = 20;
 
-  private ReentrantReadWriteLock reentrantReadWriteLock;
+  private ReadWriteLock readWriteLock;
   private Lock readLock;
   private Lock writeLock;
 
@@ -45,9 +46,9 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
     this.bucketList = (MyLinkedList<MapPair>[]) (new MyLinkedList[capacity]);
 
     // Init read-write lock.
-    reentrantReadWriteLock = new ReentrantReadWriteLock();
-    readLock = reentrantReadWriteLock.readLock();
-    writeLock = reentrantReadWriteLock.writeLock();
+    readWriteLock = new ReentrantReadWriteLock();
+    readLock = readWriteLock.readLock();
+    writeLock = readWriteLock.writeLock();
   }
 
   public MyHashMapReentrantImpl() {
