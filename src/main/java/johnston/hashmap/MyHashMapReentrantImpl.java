@@ -2,12 +2,14 @@ package johnston.hashmap;
 
 import johnston.linkedlist.MyLinkedListBasicImpl;
 import johnston.linkedlist.MyLinkedList;
+import johnston.linkedlist.MyLinkedListReentrantLockImpl;
 import org.apache.commons.codec.digest.MurmurHash3;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -25,7 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * -> Write threads mutually exclude each other.
  */
 public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
-  private int size;
+  private AtomicInteger size;
   private int capacity;
   private MyLinkedList<MapPair>[] bucketList;
   private final float loadFactor;
@@ -41,7 +43,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
 
   public MyHashMapReentrantImpl(int capacity, float loadFactor) {
     this.capacity = capacity;
-    this.size = 0;
+    this.size = new AtomicInteger(0);
     this.loadFactor = loadFactor;
     this.bucketList = (MyLinkedList<MapPair>[]) (new MyLinkedList[capacity]);
 
@@ -62,13 +64,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
    */
   @Override
   public int size() {
-    READ_LOCK.lock();
-
-    try {
-      return this.size;
-    } finally {
-      READ_LOCK.unlock();
-    }
+    return this.size.get();
   }
 
   /**
@@ -145,7 +141,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
       if (bucketList[bucketIdx] == null) {
         bucketList[bucketIdx] = getNewLinkedList();
         bucketList[bucketIdx].addFirst(newPair);
-        size++;
+        size.incrementAndGet();
         return;
       }
 
@@ -153,7 +149,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
 
       if (oldPair == null) { // No such pair, add to the bucket at index 0.
         bucketList[bucketIdx].addFirst(newPair);
-        size++;
+        size.incrementAndGet();
       } else { // Update old value
         oldPair.setV(v);
       }
@@ -170,9 +166,8 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
   @Override
   public void removeAll() {
     WRITE_LOCK.lock();
-
     try {
-      size = 0;
+      size.set(0);
       Arrays.fill(bucketList, null);
     } finally {
       WRITE_LOCK.unlock();
@@ -198,7 +193,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
       }
 
       if (bucketList[bucketIdx].remove(dummy)) {
-        size--;
+        size.decrementAndGet();
         return true;
       } else { // No such value
         return false;
@@ -236,7 +231,7 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
    * No need to lock since all caller functions are locked by write lock.
    */
   private void rehash() {
-    if (this.size * 1.0f / this.capacity < loadFactor) {
+    if (size() * 1.0f / this.capacity < loadFactor) {
       return;
     }
 
@@ -337,8 +332,8 @@ public class MyHashMapReentrantImpl<K, V> implements MyHashMapTesting<K, V> {
    * Place different linked list implementations here
    */
   private MyLinkedList<MapPair> getNewLinkedList() {
-    return new MyLinkedListBasicImpl<>();
-    // return new MyLinkedListThreadSafeImpl<>();
+    //return new MyLinkedListBasicImpl<>();
+    return new MyLinkedListReentrantLockImpl<>();
   }
 
   /**

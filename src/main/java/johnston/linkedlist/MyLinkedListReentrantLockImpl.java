@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -40,7 +41,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     }
   }
 
-  private int size;
+  private AtomicInteger size;
   private ListNode<V> dummy;
   private ListNode<V> end; // End of linked list
   private final ReadWriteLock READ_WRITE_LOCK;
@@ -53,10 +54,10 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
 
   public MyLinkedListReentrantLockImpl(V v) {
     this.dummy = new ListNode<>(null);
-    this.size = 0;
+    this.size = new AtomicInteger(0);
 
     if (v != null) {
-      this.size++;
+      this.size.incrementAndGet();
       this.dummy.next = new ListNode<>(v);
     }
 
@@ -71,12 +72,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
    */
   @Override
   public int size() {
-    READ_LOCK.lock();
-    try {
-      return this.size;
-    } finally {
-      READ_LOCK.unlock();
-    }
+    return this.size.get();
   }
 
   /**
@@ -95,12 +91,12 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
   @Override
   public MyLinkedListReentrantLockImpl addLast(V v) {
     WRITE_LOCK.lock();
+
     try {
       updateEnd();
       this.end.next = new ListNode<>(v);
       this.end = this.end.next;
-      this.size++;
-
+      this.size.incrementAndGet();
       return this;
     } finally {
       WRITE_LOCK.unlock();
@@ -114,7 +110,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       ListNode<V> newNode = new ListNode<>(v);
       newNode.next = dummy.next;
       dummy.next = newNode;
-      this.size++;
+      this.size.incrementAndGet();
 
       return this;
     } finally {
@@ -156,7 +152,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     READ_LOCK.lock();
 
     try {
-      if (index >= this.size) {
+      if (index >= this.size.get()) {
         return null;
       }
       curr = this.dummy.next;
@@ -181,7 +177,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     READ_LOCK.lock();
 
     try {
-      if (this.size == 0) {
+      if (isEmpty()) {
         return null;
       }
       curr = this.dummy.next;
@@ -214,7 +210,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
         index++;
       }
 
-      if (size == 0 || index == size) {
+      if (size() == 0 || index == size()) {
         return -1;
       }
       return index;
@@ -234,7 +230,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
     WRITE_LOCK.lock();
 
     try {
-      if (index >= this.size || index < 0) {
+      if (index >= size.get() || index < 0) {
         return false;
       }
       curr = this.dummy.next;
@@ -299,7 +295,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
       }
 
       curr.next = curr.next.next;
-      this.size--;
+      this.size.decrementAndGet();
       return true;
     } finally {
       WRITE_LOCK.unlock();
@@ -317,7 +313,7 @@ public class MyLinkedListReentrantLockImpl<V> implements MyLinkedList<V>,
 
     try {
       this.dummy.next = null;
-      size = 0;
+      size.set(0);
       return this;
     } finally {
       WRITE_LOCK.unlock();
